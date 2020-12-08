@@ -38,12 +38,10 @@ def change_line(instructions, line):
         return False
     else:
         new_instructions = instructions.copy()
-        new_instructions[line] = (
-            new_instructions[line]
-            .replace("nop", "xxx")
-            .replace("jmp", "nop")
-            .replace("xxx", "jmp")
-        )
+        if instructions[line][0:3] == "nop":
+            new_instructions[line] = new_instructions[line].replace("nop", "jmp")    
+        if instructions[line][0:3] == "jmp":
+            new_instructions[line] = new_instructions[line].replace("jmp", "nop")    
         return new_instructions
 
 
