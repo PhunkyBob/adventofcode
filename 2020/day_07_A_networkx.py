@@ -2,10 +2,11 @@
 
 import re 
 import networkx as nx
+import matplotlib.pyplot as plt
 
-# rules_txt = open('day_07_input_sample1.txt', 'r').read().split("\n")
+rules_txt = open('day_07_input_sample1.txt', 'r').read().split("\n")
 # rules_txt = open('day_07_input_sample2.txt', 'r').read().split("\n")
-rules_txt = open('day_07_input.txt', 'r').read().split("\n")
+# rules_txt = open('day_07_input.txt', 'r').read().split("\n")
 
 DG = nx.DiGraph()
 
@@ -21,3 +22,7 @@ for r in rules_txt:
 ancestors = nx.ancestors(DG, "shiny gold")
 print("'shiny gold' ancestors: " + str(ancestors))
 print(f"Part One: {len(ancestors)} ancestors")
+
+
+nx.draw(DG, with_labels=True, with_weight=True)
+plt.show()
