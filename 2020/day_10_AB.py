@@ -49,15 +49,21 @@ for i, elem in enumerate(adapters[:-1]):
     childs[elem] = [j for j in adapters[i+1:i+4] if j - elem <= 3]
 
 memory = {}
-def weight(elem):
-    if elem not in childs:
+
+"""
+Returns the number of paths existing from a specific node.
+If the node is a leaf, it returns 1.
+Else, it returns the sum of number of paths existing for all it's branches.
+"""
+def count_paths_from(from_elem):
+    if from_elem not in childs:
         return 1
     total = 0
-    for e in childs[elem]:
-        total += memory[e] if e in memory else weight(e)
-    memory[elem] = total
+    for e in childs[from_elem]:
+        total += memory[e] if e in memory else count_paths_from(e)
+    memory[from_elem] = total
     return total
-    # return sum(weight(e) for e in childs[elem])
+    # return sum(count_paths_from(e) for e in childs[from_elem])
 
 
-print("Part Two: " + str(weight(0)))
+print("Part Two: " + str(count_paths_from(0)))
