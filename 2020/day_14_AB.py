@@ -9,8 +9,9 @@ file = open("day_14_input.txt", "r")
 def apply_mask_1(input, mask):
     input = ("0"*len(mask) + str(bin(input)).replace("0b", ""))[-len(mask):]
     result = ""
-    for i in range(len(input)):
-        result += input[i] if mask[i] == 'X' else mask[i]
+    for input_elem, mask_elem in zip(input, mask):
+        result += input_elem if mask_elem == 'X' else mask_elem
+
     return int(result, 2)
 
 
@@ -39,8 +40,8 @@ file = open("day_14_input.txt", "r")
 def apply_mask_2(address, value, mask):
     address = ("0"*len(mask) + str(bin(address)).replace("0b", ""))[-len(mask):]
     result = ""
-    for i in range(len(address)):
-        result += address[i] if mask[i] == '0' else mask[i]
+    for address_elem, mask_elem in zip(address, mask):
+        result += address_elem if mask_elem == '0' else mask_elem
     
     change_bit(result, value)
 
