@@ -9,19 +9,16 @@ input = "7,14,0,17,11,1,2".split(',')
 
 def compute(input, total_turns):
     memory = {}
-    last_spoken = 0
+    memory = {int(number): (turn, turn) for turn, number in enumerate(input)}
+    last_spoken = int(input[-1])
     turn = 0
-    for turn in range(total_turns):
-        if turn < len(input):
-            last_spoken = int(input[turn])
+    for turn in range(len(memory), total_turns):
+        last, before_last = memory[last_spoken]
+        last_spoken = last - before_last
+        if last_spoken not in memory:
             memory[last_spoken] = (turn, turn)
         else:
-            last, before_last = memory[last_spoken]
-            last_spoken = last - before_last
-            if last_spoken not in memory:
-                memory[last_spoken] = (turn, turn)
-            else:
-                memory[last_spoken] = (turn, memory[last_spoken][0])
+            memory[last_spoken] = (turn, memory[last_spoken][0])
     return last_spoken
 
 # Part One
