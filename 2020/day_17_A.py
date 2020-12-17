@@ -61,7 +61,7 @@ def display_cubes(cubes):
 # Part One
 start_time = time.time()
 
-# Contains all alive cubes.
+# Contains all active cubes.
 active_cubes = set()
 
 # Initial state
