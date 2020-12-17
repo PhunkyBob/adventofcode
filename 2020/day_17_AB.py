@@ -28,7 +28,7 @@ def get_bounds(cubes):
     return mins, maxs
 
 
-def next_cycle(cubes):
+def next_cycle(cubes, active_to_active=(2, 3), inactive_to_active=3):
     bounds_min, bounds_max = get_bounds(cubes)
     all_ranges = (range(bounds_min[i] - 1, bounds_max[i] + 2) for i in range(len(bounds_max)))
     next_cubes = set()
@@ -36,11 +36,11 @@ def next_cycle(cubes):
         an = active_neighbors(cubes, coords)
         if coords in cubes:
             # Active cube
-            if an in (2, 3):
+            if an in active_to_active:
                 next_cubes.add(coords)
         else:
             # Inactive cube
-            if an == 3:
+            if an == inactive_to_active:
                 next_cubes.add(coords)
     return next_cubes
 
