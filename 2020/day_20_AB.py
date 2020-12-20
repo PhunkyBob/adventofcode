@@ -16,14 +16,17 @@ class Tile:
     left_adj: int = 0
     right_adj: int = 0
 
-    def __init__(self, input):
+    def __init__(self, input: str):
         lines = input.split("\n")
         self.id = int(re.match("Tile (\d+):", lines[0]).groups()[0])
         self.top = lines[1]
         self.bottom = lines[-1]
         self.left = "".join([l[0] for l in lines[1:]])
         self.right = "".join([l[-1] for l in lines[1:]])
-        self.content = lines[1:]
+        self.content = "\n".join([l for l in lines[1:]])
+
+    def get_trimmed(self):
+        return "\n".join([l[1:-1] for l in self.content.split("\n")[1:-1]])
 
     def is_rotable(self):
         return self.top_adj == self.bottom_adj == self.left_adj == self.right_adj == 0
@@ -91,8 +94,11 @@ for t in tiles:
         if find_tile(border) > 2:
             print(f"Duplicate candidates with tile {t.id}")
 
-# for t in tiles:
-    # t.find_adj()
+
+print(tiles[0].content)
+print(tiles[0].get_trimmed())
+# Part One
+
 tiles[0].find_adj()
 
 part_one = 1
