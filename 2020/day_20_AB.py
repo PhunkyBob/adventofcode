@@ -1,7 +1,7 @@
 # https://adventofcode.com/2020/day/20
 
 import re 
-
+import numpy as pd
 
 class Tile:
     id: int = 0
@@ -34,14 +34,22 @@ class Tile:
     def rotate(self):
         if self.is_rotable():
             self.top, self.left, self.bottom, self.right = self.left[::-1], self.bottom, self.right[::-1], self.top
+            new_content = []
+            for c in range(len(self.content[0])):
+                new_row = ''.join(row[c] for row in self.content)[::-1]
+                new_content.append(new_row)
+            self.content = "\n".join(new_content)
+            
 
-    def flip_h(self):
-        if self.is_rotable():
-            self.top, self.left, self.bottom, self.right = self.top[::-1], self.right, self.bottom[::-1], self.left
 
-    def flip_v(self):
+    # def flip_h(self):
+    #     if self.is_rotable():
+    #         self.top, self.left, self.bottom, self.right = self.top[::-1], self.right, self.bottom[::-1], self.left
+
+    def flip(self):
         if self.is_rotable():
             self.top, self.left, self.bottom, self.right = self.bottom, self.left[::-1], self.top, self.right[::-1]
+            self.content = "\n".join(revered(self.content.split("\n")))
 
     def find_adj(self):
         for t in tiles:
@@ -76,7 +84,7 @@ class Tile:
                             if action == 'r':
                                 t.rotate()
                             if action == 'f':
-                                t.flip_h()
+                                t.flip()
                         else:
                             break
         return
@@ -95,8 +103,7 @@ for t in tiles:
             print(f"Duplicate candidates with tile {t.id}")
 
 
-print(tiles[0].content)
-print(tiles[0].get_trimmed())
+
 # Part One
 
 tiles[0].find_adj()
@@ -107,3 +114,10 @@ for t in tiles:
         print(f"{t.id} is a corner")
         part_one *= t.id
 print(f"Part One: {part_one}")
+
+
+# Part Two
+
+# Merge all tiles
+for t in tiles:
+    if t.top_adj == 0 and t.left_adj == 0:
