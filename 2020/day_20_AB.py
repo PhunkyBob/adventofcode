@@ -2,6 +2,7 @@
 
 import re 
 import numpy as pd
+import time
 
 class Tile:
     id: int = 0
@@ -49,12 +50,27 @@ class Tile:
     def flip(self):
         if self.is_rotable():
             self.top, self.left, self.bottom, self.right = self.bottom, self.left[::-1], self.top, self.right[::-1]
-            self.content = "\n".join(revered(self.content.split("\n")))
+            self.content = "\n".join(reversed(self.content.split("\n")))
+
+    def all_positions(self):
+        yield 
+        for action in ('r', 'r', 'r', 'f', 'r', 'r', 'r'):
+            if self.is_rotable():
+                if action == 'r':
+                    self.rotate()
+                if action == 'f':
+                    self.flip()
+                yield
+            else:
+                break
+
+        return
+
 
     def find_adj(self):
         for t in tiles:
             if t.id != self.id:
-                for action in ('r', 'r', 'r', 'r', 'f', 'r', 'r', 'r', 'r'):
+                for _ in t.all_positions():
                     if self.right_adj == 0:
                         if self.right == t.left:
                             self.right_adj = t.id
@@ -79,14 +95,6 @@ class Tile:
                             t.bottom_adj = self.id
                             t.find_adj()
                             break
-                    if self.right_adj == 0 or self.bottom_adj == 0:
-                        if t.is_rotable():
-                            if action == 'r':
-                                t.rotate()
-                            if action == 'f':
-                                t.flip()
-                        else:
-                            break
         return
 
 
@@ -105,8 +113,9 @@ for t in tiles:
 
 
 # Part One
-
+start_time = time.time()
 tiles[0].find_adj()
+
 
 part_one = 1
 for t in tiles:
@@ -114,10 +123,10 @@ for t in tiles:
         print(f"{t.id} is a corner")
         part_one *= t.id
 print(f"Part One: {part_one}")
-
+print("--- %.2f seconds ---" % (time.time() - start_time))
 
 # Part Two
 
 # Merge all tiles
-for t in tiles:
-    if t.top_adj == 0 and t.left_adj == 0:
+# for t in tiles:
+#     if t.top_adj == 0 and t.left_adj == 0:
