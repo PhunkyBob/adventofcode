@@ -26,7 +26,7 @@ input_file = "day_24_input.txt"
 
 lines = list(map(lambda s: s.strip(), open(input_file, "r").readlines()))
 
-actions = {
+directions = {
     "e": lambda x, y: (x, y + 2),
     "se": lambda x, y: (x + 1, y + 1),
     "sw": lambda x, y: (x + 1, y - 1),
@@ -37,56 +37,52 @@ actions = {
 
 # Part One
 start_time = time.time()
-final_tiles = {} # List of all final tiles. True = black
+black_tiles = set() # List of all final tiles. True = black
 
 for line in lines:
     pos_x = pos_y = 0
     for instruction in re.findall("(e|se|sw|w|nw|ne)", line):
-        pos_x, pos_y = actions[instruction](pos_x, pos_y)
-    if (pos_x, pos_y) in final_tiles:
-        final_tiles[(pos_x, pos_y)] = not final_tiles[(pos_x, pos_y)]
+        pos_x, pos_y = directions[instruction](pos_x, pos_y)
+    if (pos_x, pos_y) in black_tiles:
+        black_tiles.remove((pos_x, pos_y))
     else:
-        final_tiles[(pos_x, pos_y)] = True
+        black_tiles.add((pos_x, pos_y))
 
-answer = sum(1 for t in final_tiles if final_tiles[t] == True)
+answer = len(black_tiles)
 print(f"Part One: {answer}")
 print("--- %.2f seconds ---" % (time.time() - start_time))
 
 # Part Two
 start_time = time.time()
 
-def count_adjacent_black(tile, all_tiles):
+def count_adjacent_black(tile, all_black_tiles):
     count = 0
-    for a in actions:
-        search_t = actions[a](tile[0], tile[1])
-        if search_t in all_tiles and all_tiles[search_t]:
+    for d in directions:
+        search_t = directions[d](tile[0], tile[1])
+        if search_t in all_black_tiles:
             count += 1
     return count
 
 for r in range(100):
     # Add all tiles adjacent to a black tile.
-    new_tiles = copy.deepcopy(final_tiles)
-    for t in final_tiles:
-        if final_tiles[t] == True:
-            for a in actions:
-                new_t = actions[a](t[0], t[1])
-                if new_t not in final_tiles:
-                    new_tiles[new_t] = False
-    # Flip all requireded tiles.
-    for t in new_tiles:
-        adj_black = count_adjacent_black(t, final_tiles)
-        if new_tiles[t] == True:
-            # Black
-            if adj_black == 0 or adj_black > 2:
-                new_tiles[t] = False
-        else:
-            # White
-            if adj_black == 2:
-                new_tiles[t] = True
-    final_tiles = new_tiles
-    # answer = sum(1 for t in final_tiles if final_tiles[t] == True)
+    new_black_tiles = set()
+    for t in black_tiles:
+        # Current black tile.
+        adj_black = count_adjacent_black(t, black_tiles)
+        if 0 < adj_black <= 2:
+            new_black_tiles.add(t)
+        
+        # All white tiles around this black tile.
+        for d in directions:
+            new_t = directions[d](t[0], t[1])
+            if new_t not in black_tiles:
+                adj_black = count_adjacent_black(new_t, black_tiles)
+                if adj_black == 2:
+                    new_black_tiles.add(new_t)
+    black_tiles = new_black_tiles
+    # answer = len(black_tiles)
     # print(f"Part Two after {r+1} rounds: {answer}")
 
-answer = sum(1 for t in final_tiles if final_tiles[t] == True)
+answer = len(black_tiles)
 print(f"Part Two: {answer}")
 print("--- %.2f seconds ---" % (time.time() - start_time))
