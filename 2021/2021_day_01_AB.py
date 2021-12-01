@@ -1,4 +1,5 @@
-# https://adventofcode.com/2021/day/1
+# -*- coding: utf-8 -*-
+""" https://adventofcode.com/2021/day/1 """
 
 import time
 
@@ -21,6 +22,6 @@ if __name__ == '__main__':
     cumulative_input = [input[i] + input[i-1] + input[i-2] for i in range(2, len(input))]
     result = process(cumulative_input)
     print(f'Day 01 Part Two: {result}')
-    
+
     print("--- %.2f seconds ---" % (time.time() - start_time))
 
