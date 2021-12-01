@@ -2,6 +2,10 @@
 
 import time
 
+def process(input):
+    return sum([1 if input[i] > input[i-1] else 0 for i in range(1, len(input))])
+
+
 if __name__ == '__main__':
     start_time = time.time()
 
@@ -10,12 +14,13 @@ if __name__ == '__main__':
     input = [int(x) for x in open(input_file, 'r').readlines()]
 
     """Part One"""
-    result = sum([1 if input[i] > input[i-1] else 0 for i in range(1, len(input))])
+    result = process(input)
     print(f'Day 01 Part One: {result}')
 
     """Part Two"""
     cumulative_input = [input[i] + input[i-1] + input[i-2] for i in range(2, len(input))]
-    result = sum([1 if cumulative_input[i] > cumulative_input[i-1] else 0 for i in range(1, len(cumulative_input))])
+    result = process(cumulative_input)
     print(f'Day 01 Part Two: {result}')
+    
     print("--- %.2f seconds ---" % (time.time() - start_time))
 
