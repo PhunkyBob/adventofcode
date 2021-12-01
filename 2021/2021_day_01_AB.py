@@ -19,7 +19,8 @@ if __name__ == '__main__':
     print(f'Day 01 Part One: {result}')
 
     """Part Two"""
-    cumulative_input = [input[i] + input[i-1] + input[i-2] for i in range(2, len(input))]
+    window_size = 3
+    cumulative_input = [sum(input[i-window_size+1:i+1]) for i in range(2, len(input))]
     result = process(cumulative_input)
     print(f'Day 01 Part Two: {result}')
 
