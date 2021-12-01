@@ -20,8 +20,14 @@ if __name__ == '__main__':
 
     """Part Two"""
     window_size = 3
-    cumulative_input = [sum(input[i-window_size+1:i+1]) for i in range(2, len(input))]
-    result = process(cumulative_input)
+
+    # # Version avec recyclage de la fonction de la partie 1 : 
+    # cumulative_input = [sum(input[i-window_size+1:i+1]) for i in range(2, len(input))]
+    # result = process(cumulative_input)
+
+    # Version optimisée sans création de tableau intermédiaire : 
+    result = sum([1 if sum(input[i-window_size+1:i+1]) > sum(input[i-window_size:i]) else 0 for i in range(3, len(input))])
+    
     print(f'Day 01 Part Two: {result}')
 
     print("--- %.2f seconds ---" % (time.time() - start_time))
