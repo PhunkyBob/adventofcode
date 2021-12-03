@@ -2,26 +2,15 @@
 """ https://adventofcode.com/2021/day/3 """
 
 import time
-
+from collections import Counter
 
 def load_input(filename):
     return [x.strip() for x in open(filename, "r").readlines()]
 
 
 def solve_part_one(input):
-    gamma_rate = ""
-    epsilon_rate = ""
-    for col in range(len(input[0])):
-        total = 0
-        for line in input:
-            total += int(line[col])
-        if total > len(input) / 2:
-            gamma_rate += "1"
-            epsilon_rate += "0"
-        else:
-            gamma_rate += "0"
-            epsilon_rate += "1"
-
+    gamma_rate = "".join([Counter(column).most_common()[0][0] for column in zip(*input)])
+    epsilon_rate = "".join([Counter(column).most_common()[-1][0] for column in zip(*input)])
     return int(gamma_rate, 2) * int(epsilon_rate, 2)
 
 
@@ -50,6 +39,11 @@ def filter(input, pos, value):
 
 
 def find_most_common(input, pos):
+    mc = Counter(list(zip(*input))[pos]).most_common()
+    if mc[0][1] == mc[-1][1]:
+        return '1'
+    else:
+        return mc[0][0]
     total = 0
     for line in input:
         char = line[pos]
@@ -60,7 +54,7 @@ def find_most_common(input, pos):
 
 
 def find_least_common(input, pos):
-    return "0" if find_most_common(input, pos) == "1" else "1"
+    return '0' if find_most_common(input, pos) == '1' else '1'
 
 
 if __name__ == "__main__":
