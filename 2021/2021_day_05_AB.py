@@ -4,16 +4,14 @@
 import time
 from dataclasses import dataclass
 from itertools import product
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Display the result map.
+DRAW_RESULT = False
 
-@dataclass
-class Point:
-    x: int
-    y: int
-
+Point = namedtuple("Point", ["x", "y"])
 
 @dataclass
 class Line:
@@ -114,7 +112,7 @@ def solve_part_two(input, draw=False):
     for line in input:
         for point in line.get_line():
             used_points[point] += 1
-    
+
     if draw:
         draw_map(used_points)
     return sum(1 if used_points[point] >= 2 else 0 for point in used_points)
@@ -123,18 +121,16 @@ def solve_part_two(input, draw=False):
 if __name__ == "__main__":
     start_time = time.time()
 
-    draw = True
-
     # input_file = "2021_day_05_input_sample.txt"
     input_file = "2021_day_05_input.txt"
     input = load_input(input_file)
 
     """Part One"""
-    result = solve_part_one(input, draw)
+    result = solve_part_one(input, DRAW_RESULT)
     print(f"Day 5 Part One: {result}")
 
     """Part Two"""
-    result = solve_part_two(input, draw)
+    result = solve_part_two(input, DRAW_RESULT)
     print(f"Day 5 Part Two: {result}")
 
     print("--- %.2f seconds ---" % (time.time() - start_time))
