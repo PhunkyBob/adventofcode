@@ -6,10 +6,11 @@ from dataclasses import dataclass
 from itertools import product
 from collections import defaultdict, namedtuple
 import matplotlib.pyplot as plt
+from matplotlib import pylab
 import numpy as np
 
 # Display the result map.
-DRAW_RESULT = False
+DRAW_RESULT = True
 
 Point = namedtuple("Point", ["x", "y"])
 
@@ -83,7 +84,7 @@ def draw_map_txt(points):
     print(cur_line)
 
 
-def draw_map(points):
+def draw_map(points, title=""):
     min_x = 0
     min_y = 0
     max_x = max(point[0] for point in points)
@@ -93,6 +94,9 @@ def draw_map(points):
         if (x, y) in points:
             full_map[y, x] = points[(x, y)]
     plt.imshow(full_map, cmap="YlOrRd")
+    plt.title(title)
+    fig = pylab.gcf()
+    fig.canvas.set_window_title(title)
     plt.show()
 
 
@@ -103,7 +107,7 @@ def solve_part_one(input, draw=False):
             used_points[point] += 1
 
     if draw:
-        draw_map(used_points)
+        draw_map(used_points, "Part One")
     return sum(1 if used_points[point] >= 2 else 0 for point in used_points)
 
 
@@ -114,7 +118,7 @@ def solve_part_two(input, draw=False):
             used_points[point] += 1
 
     if draw:
-        draw_map(used_points)
+        draw_map(used_points, "Part Two")
     return sum(1 if used_points[point] >= 2 else 0 for point in used_points)
 
 
