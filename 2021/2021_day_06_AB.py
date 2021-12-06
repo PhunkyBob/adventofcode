@@ -51,11 +51,12 @@ if __name__ == "__main__":
     input = load_input(input_file)
 
     """Part One"""
-    result = solve_part_one(input)
+    # result = solve_part_one(input)
+    result = solve_part_two(input, 80)
     print(f"Day 6 Part One: {result}")
 
     """Part Two"""
-    result = solve_part_two(input)
+    result = solve_part_two(input, 256)
     print(f"Day 6 Part Two: {result}")
 
     print("--- %.2f seconds ---" % (time.time() - start_time))
