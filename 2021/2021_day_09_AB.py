@@ -4,7 +4,7 @@
 import time
 from functools import reduce
 from operator import mul
-
+from itertools import product
 
 class Heightmap:
     heightmap = []
@@ -28,19 +28,12 @@ class Heightmap:
         return 1 + self.heightmap[y][x]
 
     def get_risk_level(self):
-        risk = 0
-        for y in range(len(self.heightmap)):
-            for x in range(len(self.heightmap[y])):
-                risk += self.get_risk(x, y)
-        return risk
+        return sum([self.get_risk(x, y) for x, y in product(range(len(self.heightmap[0])), range(len(self.heightmap)))])
+
 
     def get_low_points(self):
-        low_points = []
-        for y in range(len(self.heightmap)):
-            for x in range(len(self.heightmap[y])):
-                if self.get_risk(x, y):
-                    low_points.append((x, y))
-        return low_points
+        return [(x, y) for x, y in product(range(len(self.heightmap[0])), range(len(self.heightmap))) if self.get_risk(x, y)]
+
 
     def get_basin(self, x, y, visited):
         if (x, y) in visited:
@@ -66,9 +59,7 @@ def solve_part_one(heightmap):
 
 def solve_part_two(heightmap):
     low_points = heightmap.get_low_points()
-    sizes = []
-    for x, y in low_points:
-        sizes.append(heightmap.get_basin_size(x, y))
+    sizes = [heightmap.get_basin_size(x, y) for x, y in low_points]
     sizes.sort(reverse=True)
     return reduce(mul, sizes[:3])
 
