@@ -6,6 +6,7 @@ from functools import reduce
 from operator import mul
 from itertools import product
 
+
 class Heightmap:
     heightmap = []
 
@@ -28,12 +29,23 @@ class Heightmap:
         return 1 + self.heightmap[y][x]
 
     def get_risk_level(self):
-        return sum([self.get_risk(x, y) for x, y in product(range(len(self.heightmap[0])), range(len(self.heightmap)))])
-
+        return sum(
+            [
+                self.get_risk(x, y)
+                for x, y in product(
+                    range(len(self.heightmap[0])), range(len(self.heightmap))
+                )
+            ]
+        )
 
     def get_low_points(self):
-        return [(x, y) for x, y in product(range(len(self.heightmap[0])), range(len(self.heightmap))) if self.get_risk(x, y)]
-
+        return [
+            (x, y)
+            for x, y in product(
+                range(len(self.heightmap[0])), range(len(self.heightmap))
+            )
+            if self.get_risk(x, y)
+        ]
 
     def get_basin(self, x, y, visited):
         if (x, y) in visited:
