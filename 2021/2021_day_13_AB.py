@@ -9,10 +9,13 @@ def load_input(filename):
     with open(filename, "r") as f:
         dots_txt, actions = f.read().split("\n\n")
     return (
-        {(x, y): True for x, y in [list(map(int, x.split(","))) for x in dots_txt.split("\n")]},
+        {
+            (x, y): True
+            for x, y in [list(map(int, x.split(","))) for x in dots_txt.split("\n")]
+        },
         list(
             map(lambda x: x.replace("fold along ", "").split("="), actions.split("\n"))
-        )
+        ),
     )
 
 
@@ -69,7 +72,7 @@ def solve_part_two(dots, actions):
 if __name__ == "__main__":
     start_time = time.time()
 
-    input_file = '2021_day_13_input_sample.txt'
+    # input_file = '2021_day_13_input_sample.txt'
     input_file = "2021_day_13_input.txt"
     dots, actions = load_input(input_file)
 
