@@ -45,7 +45,7 @@ class Cavern:
 
 
     def dijkstra(self, start_node, end_node):
-        unvisited_nodes = list(self.graph.keys())
+        unvisited_nodes = [start_node] #list(self.graph.keys())
         shortest_path = defaultdict(lambda: math.inf)
         previous_nodes = {}
         shortest_path[start_node] = 0
@@ -61,10 +61,12 @@ class Cavern:
                     current_min_node = node
                     
             for neighbor in self.graph[current_min_node]:
-                tentative_value = shortest_path[current_min_node] + self.graph[current_min_node][neighbor]
-                if tentative_value < shortest_path[neighbor]:
-                    shortest_path[neighbor] = tentative_value
-                    previous_nodes[neighbor] = current_min_node
+                if neighbor not in previous_nodes:
+                    tentative_value = shortest_path[current_min_node] + self.graph[current_min_node][neighbor]
+                    if tentative_value < shortest_path[neighbor]:
+                        shortest_path[neighbor] = tentative_value
+                        previous_nodes[neighbor] = current_min_node
+                    unvisited_nodes.append(neighbor)
     
             unvisited_nodes.remove(current_min_node)
         
@@ -97,7 +99,7 @@ if __name__ == '__main__':
     # Your puzzle answer was 741.
 
     """Part Two"""
-    # result = solve_part_two(input_file)
+    result = solve_part_two(input_file)
     print(f'Day 15 Part Two: {result}')
     # Your puzzle answer was 2976.
 
