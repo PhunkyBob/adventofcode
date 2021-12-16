@@ -81,6 +81,8 @@ def solve_part_one(input_file):
 
 def solve_part_two(input_file):
     cavern = Cavern(input_file)
+
+    # TODO: don't use an extended grid.
     cavern.extend()
     cavern.init_graph()
     previous_nodes, shortest_path = cavern.dijkstra((0,0), (len(cavern.cavern)-1, len(cavern.cavern[0])-1))
