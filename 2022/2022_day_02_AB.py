@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
-""" https://adventofcode.com/2022/day/1 """
+""" https://adventofcode.com/2022/day/2 """
 
 from aoc_performance import aoc_perf
 
-ROCK = 1
-PAPER = 2
-CISORS = 3
+ROCK, PAPER, CISORS = 1, 2, 3
 
 
 def score_outcome(opponent: int, you: int) -> int:
-    if opponent == you:
+    """Gives score regarding what opponent and you play."""
+    if opponent == you:  # draw game
         return 3
     if (
         (opponent == ROCK and you == CISORS)
         or (opponent == PAPER and you == ROCK)
         or (opponent == CISORS and you == PAPER)
-    ):
+    ):  # lose
         return 0
-    return 6
+    return 6  # win
 
 
 def part_A(filename: str) -> int:
@@ -30,21 +29,27 @@ def part_A(filename: str) -> int:
     return total_score
 
 
-def outcome_to_score(outcome):
+def outcome_to_score(outcome: str) -> dict:
+    """Tranforms a matrix of outcome to score as dictionary"""
     outcome_dict = {}
     lines = outcome.split("\n")
     header = lines[1]
-    for line in lines[2:-1]:
+    for line in lines[2:-1]:  # Remove header and footer
         for i in range(1, 4):
             outcome_dict[line[0] + " " + header[i]] = int(line[i])
     return outcome_dict
 
 
 def part_A2(filename: str) -> int:
-    """You play
-    X: Rock
-    Y: Paper
-    Z: Cisors
+    """Thix matrix shows outcome score when
+       You play
+    X: rock
+    Y: paper
+    Z: cisors
+    versus
+    A: rock
+    B: paper
+    C: cisors
     """
     outcome_txt = """
  XYZ
@@ -64,10 +69,15 @@ C603
 
 
 def part_B(filename: str) -> int:
-    """You
-    X: Loose hand
-    Y: Draw hand
-    Z: Win hand
+    """Thix matrix shows hand score when
+       You
+    X: loose hand
+    Y: draw hand
+    Z: win hand
+    versus
+    A: rock
+    B: paper
+    C: cisors
     """
     hand_score_txt = """
  XYZ
@@ -86,7 +96,7 @@ C231
     return total_score
 
 
-def main():
+def main() -> None:
     # input_filename = "2022_day_02_input_sample.txt"
     input_filename = "2022_day_02_input.txt"
 
