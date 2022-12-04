@@ -6,9 +6,12 @@ from aoc_performance import aoc_perf
 
 
 def read_input(filename: str):
+    data = []
     with open(filename, "r") as f:
-        content = f.read()
-    return content
+        for line in map(lambda x: x.strip(), f):
+            ...
+            data.append(line)
+    return data
 
 
 def part_one(filename: str) -> int:
