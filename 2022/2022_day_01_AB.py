@@ -2,6 +2,7 @@
 """ https://adventofcode.com/2022/day/1 """
 
 from aoc_performance import aoc_perf
+from typing import List
 
 
 def get_bag(filename: str) -> dict:
@@ -45,6 +46,38 @@ def part_B2(filename: str) -> int:
     return sum(sorted_bags[:3])
 
 
+def part_B3(filename: str) -> int:
+    """This version don't store the list, only the best N."""
+    top_n = TopN(3)
+    with open(filename, "r") as f:
+        elf_bag_value = 0
+        while content := f.readline():
+            content = content.strip()
+            if not content:
+                top_n.update(elf_bag_value)
+                elf_bag_value = 0
+                continue
+            elf_bag_value += int(content)
+
+    return sum(top_n.shortlist)
+
+
+class TopN:
+    shortlist: List[int]
+    min_val_of_shortlist: int
+
+    def __init__(self, size: int = 1) -> None:
+        self.shortlist = [0] * size
+        self.min_val_of_shortlist = 0
+
+    def update(self, value: int) -> None:
+        if value > self.min_val_of_shortlist:
+            self.shortlist.append(value)
+            self.shortlist.sort()
+            self.shortlist.pop(0)
+            self.min_val_of_shortlist = min(self.shortlist)
+
+
 def main():
     # input_filename = "2022_day_01_input_sample.txt"
     input_filename = "2022_day_01_input.txt"
@@ -54,14 +87,19 @@ def main():
         answer = part_A(input_filename)
         print(f"Answer: {answer}")
 
-    with aoc_perf():
+    with aoc_perf(memory=True):
         print("Day 01 Part B")
         answer = part_B(input_filename)
         print(f"Answer: {answer}")
 
-    with aoc_perf():
+    with aoc_perf(memory=True):
         print("Day 01 Part B - alternative")
         answer = part_B2(input_filename)
+        print(f"Answer: {answer}")
+
+    with aoc_perf(memory=True):
+        print("Day 01 Part B - alternative 2")
+        answer = part_B3(input_filename)
         print(f"Answer: {answer}")
 
 
