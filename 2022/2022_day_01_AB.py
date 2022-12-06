@@ -1,5 +1,37 @@
 # -*- coding: utf-8 -*-
-""" https://adventofcode.com/2022/day/1 """
+""" 
+--- Day 1: Calorie Counting ---
+https://adventofcode.com/2022/day/1 
+
+Tthe Elves begin taking inventory of their supplies. One important 
+consideration is food - in particular, the number of Calories each 
+Elf is carrying (your puzzle input).
+
+1000
+2000
+3000
+
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000
+
+This list represents the Calories of the food carried by five Elves:
+- The first Elf is carrying food with 1000, 2000, and 3000 Calories, a 
+total of 6000 Calories.
+- The second Elf is carrying one food item with 4000 Calories.
+- The third Elf is carrying food with 5000 and 6000 Calories, a total 
+of 11000 Calories.
+- The fourth Elf is carrying food with 7000, 8000, and 9000 Calories, a 
+total of 24000 Calories.
+- The fifth Elf is carrying one food item with 10000 Calories.
+"""
 
 from aoc_performance import aoc_perf
 from typing import List

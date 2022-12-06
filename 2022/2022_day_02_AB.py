@@ -1,5 +1,32 @@
 # -*- coding: utf-8 -*-
-""" https://adventofcode.com/2022/day/2 """
+""" 
+--- Day 2: Rock Paper Scissors ---
+https://adventofcode.com/2022/day/2 
+
+Rock Paper Scissors is a game between two players. 
+Appreciative of your help yesterday, one Elf gives you an encrypted 
+strategy guide (your puzzle input) that they say will be sure to help you 
+win. "The first column is what your opponent is going to play: A for Rock, 
+B for Paper, and C for Scissors. The second column--" 
+
+The second column, you reason, must be what you should play in response: 
+X for Rock, Y for Paper, and Z for Scissors. Winning every time would be 
+suspicious, so the responses must have been carefully chosen.
+
+For example, suppose you were given the following strategy guide:
+A Y
+B X
+C Z
+
+This strategy guide predicts and recommends the following:
+- In the first round, your opponent will choose Rock (A), and you should 
+choose Paper (Y). This ends in a win for you with a score of 8 (2 because 
+you chose Paper + 6 because you won).
+- In the second round, your opponent will choose Paper (B), and you should 
+choose Rock (X). This ends in a loss for you with a score of 1 (1 + 0).
+- The third round is a draw with both players choosing Scissors, giving 
+you a score of 3 + 3 = 6.
+"""
 
 from aoc_performance import aoc_perf
 

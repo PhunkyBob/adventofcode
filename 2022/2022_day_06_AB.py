@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
-""" https://adventofcode.com/2022/day/6 """
+""" 
+--- Day 6: Tuning Trouble ---
+https://adventofcode.com/2022/day/6 
+
+To fix the communication system, you need to add a subroutine to the device 
+that detects a start-of-packet marker in the datastream. In the protocol 
+being used by the Elves, the start of a packet is indicated by a sequence 
+of four characters that are all different.
+"""
 DAY = "06"
 
 from aoc_performance import aoc_perf

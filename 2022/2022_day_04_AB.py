@@ -1,5 +1,36 @@
 # -*- coding: utf-8 -*-
-""" https://adventofcode.com/2022/day/4 """
+""" 
+--- Day 4: Camp Cleanup ---
+https://adventofcode.com/2022/day/4 
+
+For example, consider the following list of section assignment pairs:
+2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8
+
+This example list uses single-digit section IDs to make it easier to draw; your actual list might contain larger numbers. Visually, these pairs of section assignments look like this:
+
+.234.....  2-4
+.....678.  6-8
+
+.23......  2-3
+...45....  4-5
+
+....567..  5-7
+......789  7-9
+
+.2345678.  2-8
+..34567..  3-7
+
+.....6...  6-6
+...456...  4-6
+
+.23456...  2-6
+...45678.  4-8
+"""
 DAY = "04"
 
 from aoc_performance import aoc_perf
