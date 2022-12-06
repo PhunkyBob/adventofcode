@@ -96,18 +96,21 @@ def part_B3(filename: str) -> int:
 
 class TopN:
     shortlist: List[int]
-    min_val_of_shortlist: int
+    index_of_min: int
 
     def __init__(self, size: int = 1) -> None:
         self.shortlist = [0] * size
-        self.min_val_of_shortlist = 0
+        self.index_of_min = 0
 
     def update(self, value: int) -> None:
-        if value > self.min_val_of_shortlist:
-            self.shortlist.append(value)
-            self.shortlist.sort()
-            self.shortlist.pop(0)
-            self.min_val_of_shortlist = min(self.shortlist)
+        if value > self.shortlist[self.index_of_min]:
+            self.shortlist[self.index_of_min] = value
+            self._set_index_of_min()
+
+    def _set_index_of_min(self) -> None:
+        for idx, elem in enumerate(self.shortlist):
+            if elem < self.shortlist[self.index_of_min]:
+                self.index_of_min = idx
 
 
 def main():
