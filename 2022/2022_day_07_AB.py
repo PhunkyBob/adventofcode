@@ -56,9 +56,9 @@ def calculate_total_size(starts_with: str) -> int:
     return size_dir + size_sub_dir
 
 
-def part_one(filename: str) -> int:
+def init_folders(filename: str) -> None:
     global folders
-    AT_MOST = 100000
+    folders = defaultdict(lambda: {"files": {}, "folders": {}})
     current_folder = []
     with open(filename, "r") as f:
         for line in map(lambda x: x.strip(), f):
@@ -80,6 +80,10 @@ def part_one(filename: str) -> int:
                 if size.isnumeric():
                     folders["/".join(current_folder)]["files"][name] = int(size)
 
+
+def part_one(filename: str) -> int:
+    AT_MOST = 100000
+    init_folders(filename)
     answer = 0
     for folder in folders:
         size = calculate_total_size(folder)
@@ -91,6 +95,7 @@ def part_one(filename: str) -> int:
 def part_two(filename: str) -> int:
     TOTAL_DISK_SPACE = 70000000
     UNUSED_SPACE_NEEDED = 30000000
+    init_folders(filename)
     root_size = calculate_total_size("/")
     available_disk_space = TOTAL_DISK_SPACE - root_size
     min_folder, min_folder_size = "/", root_size
@@ -99,7 +104,6 @@ def part_two(filename: str) -> int:
         if available_disk_space + size > UNUSED_SPACE_NEEDED:
             if size < min_folder_size:
                 min_folder, min_folder_size = folder, size
-
     return min_folder, min_folder_size
 
 
