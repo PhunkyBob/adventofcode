@@ -37,17 +37,15 @@ class Position:
 
 
 class Motions:
-    head: Position
-    tail: Position
+    knots: List["Position"]
     tail_history: List[Position]
     filename: str
 
     DIRECTIONS: dict = {"R": (1, 0), "L": (-1, 0), "U": (0, 1), "D": (0, -1)}
 
-    def __init__(self, filename) -> None:
+    def __init__(self, filename, knots: int = 2) -> None:
         self.filename = filename
-        self.head = Position()
-        self.tail = Position()
+        self.knots = [Position()] * knots
         self.tail_history = []
         self.save_tail_history()
 
@@ -66,6 +64,9 @@ class Motions:
             self.tail = old_head
         self.save_tail_history()
 
+    def move_knot(self, knot):
+        pass
+
     def get_motions(self):
         with open(self.filename, "r") as f:
             for line in f:
@@ -73,7 +74,7 @@ class Motions:
                 yield direction, int(length)
 
     def save_tail_history(self) -> None:
-        self.tail_history.append(self.tail)
+        self.tail_history.append(self.knots[-1])
 
     def printmap(self):
         print(self.head)
@@ -99,6 +100,11 @@ def main() -> None:
     with aoc_perf():
         print(f"Day {DAY} Part One")
         answer = part_one(input_filename)
+        print(f"Answer: {answer}")
+
+    with aoc_perf():
+        print(f"Day {DAY} Part Two")
+        answer = part_two(input_filename)
         print(f"Answer: {answer}")
 
 

@@ -2,7 +2,7 @@ import pytest
 import sys
 
 sys.path.append("..")
-from day_09_AB import Position, Motions, part_one, part_two
+from day_09_A import Position, Motions, part_one, part_two
 
 DAY = "09"
 
