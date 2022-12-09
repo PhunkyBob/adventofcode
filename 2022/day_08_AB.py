@@ -143,8 +143,8 @@ def part_two(filename: str) -> int:
 
 
 def main() -> None:
-    input_filename = f"2022_day_{DAY}_input_sample.txt"
-    input_filename = f"2022_day_{DAY}_input.txt"
+    input_filename = f"day_{DAY}_input_sample.txt"
+    input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf():
         print(f"Day {DAY} Part One")

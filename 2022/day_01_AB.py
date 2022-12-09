@@ -114,8 +114,8 @@ class TopN:
 
 
 def main():
-    # input_filename = "2022_day_01_input_sample.txt"
-    input_filename = "2022_day_01_input.txt"
+    # input_filename = "day_01_input_sample.txt"
+    input_filename = "day_01_input.txt"
 
     with aoc_perf():
         print("Day 01 Part A")

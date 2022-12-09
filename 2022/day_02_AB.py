@@ -124,8 +124,8 @@ C231
 
 
 def main() -> None:
-    # input_filename = "2022_day_02_input_sample.txt"
-    input_filename = "2022_day_02_input.txt"
+    # input_filename = "day_02_input_sample.txt"
+    input_filename = "day_02_input.txt"
 
     with aoc_perf():
         print("Day 02 Part A")
