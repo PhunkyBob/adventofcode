@@ -107,5 +107,19 @@ def test_part_one():
     assert answer == 6354
 
 
+def test_part_two():
+    input_filename = f"day_{DAY}_input_sample.txt"
+    answer = part_two(input_filename)
+    assert answer == 1
+
+    input_filename = f"day_{DAY}_input_sample2.txt"
+    answer = part_two(input_filename)
+    assert answer == 36
+
+    input_filename = f"day_{DAY}_input.txt"
+    answer = part_two(input_filename)
+    assert answer == 2651
+
+
 if __name__ == "__main__":
     pass

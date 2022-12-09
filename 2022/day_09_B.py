@@ -56,6 +56,37 @@ class Motions:
             self.printmap()
         self.save_tail_history()
 
+    def play(self) -> None:
+        for direction, length in self.get_motions():
+            if self.debug:
+                print(f"== {direction} {length} ==")
+            self.move_head_length(direction, length)
+            self.printmap()
+
+    def move_head_length(self, direction: str, length: int) -> None:
+        for _ in range(length):
+            self.move_head(direction)
+
+    def move_head(self, direction: str):
+        self.knots[0].move(*self.DIRECTIONS[direction])
+        for i in range(len(self.knots) - 1):
+            previous_knot = self.knots[i]
+            actual_knot = self.knots[i + 1]
+            if not previous_knot.is_touching(actual_knot):
+                self.knots[i + 1].x += max(-1, min(1, previous_knot.x - actual_knot.x))
+                self.knots[i + 1].y += max(-1, min(1, previous_knot.y - actual_knot.y))
+        # self.printmap()
+        self.save_tail_history()
+
+    def get_motions(self):
+        with open(self.filename, "r") as f:
+            for line in f:
+                direction, length = line.split(" ")
+                yield direction, int(length)
+
+    def save_tail_history(self) -> None:
+        self.tail_history.append(self.knots[-1].copy())
+
     def get_bounds(self) -> None:
         if not self.debug:
             return
@@ -71,50 +102,6 @@ class Motions:
                 min_x, max_x = min(min_x, x), max(max_x, x)
                 min_y, max_y = min(min_y, y), max(max_y, y)
         self.bounds = [[min_x, max_x], [min_y, max_y]]
-
-    def play(self) -> None:
-        for direction, length in self.get_motions():
-            if self.debug:
-                print(f"== {direction} {length} ==")
-            self.move_head_length(direction, length)
-            self.printmap()
-
-    def move_head_length(self, direction: str, length: int) -> None:
-        for _ in range(length):
-            self.move_head(direction)
-
-    def move_head(self, direction: str):
-        memory_knot = self.knots[0].copy()
-        self.knots[0].move(*self.DIRECTIONS[direction])
-        for i in range(len(self.knots) - 1):
-            previous_knot = self.knots[i].copy()
-            actual_knot = self.knots[i + 1].copy()
-            diff = abs(actual_knot.x - memory_knot.x) + abs(actual_knot.y - memory_knot.y)
-            if not previous_knot.is_touching(actual_knot):
-                if diff > 1 and previous_knot.x != actual_knot.x and previous_knot.y != actual_knot.y:
-                    self.knots[i + 1] = memory_knot
-                elif diff > 1:
-                    self.knots[i + 1].x = (actual_knot.x + previous_knot.x) / 2
-                    self.knots[i + 1].y = (actual_knot.y + previous_knot.y) / 2
-                elif diff == 1:
-                    evol_x, evol_y = previous_knot.x - memory_knot.x, previous_knot.y - memory_knot.y
-                    self.knots[i + 1].x += evol_x
-                    self.knots[i + 1].y += evol_y
-                memory_knot = actual_knot.copy()
-        # self.printmap()
-        self.save_tail_history()
-
-    def move_knot(self, knot):
-        pass
-
-    def get_motions(self):
-        with open(self.filename, "r") as f:
-            for line in f:
-                direction, length = line.split(" ")
-                yield direction, int(length)
-
-    def save_tail_history(self) -> None:
-        self.tail_history.append(self.knots[-1].copy())
 
     def printmap(self):
         if not self.debug:
