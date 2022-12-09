@@ -32,11 +32,14 @@ class Position:
     def is_touching(self, elem: "Position") -> bool:
         return max(abs(self.x - elem.x), abs(self.y - elem.y)) <= 1
 
+    def copy(self) -> "Position":
+        return Position(self.x, self.y)
+
 
 class Motions:
     head: Position
     tail: Position
-    tail_positions: List[Position]
+    tail_history: List[Position]
     filename: str
 
     DIRECTIONS: dict = {"R": (1, 0), "L": (-1, 0), "U": (0, 1), "D": (0, -1)}
@@ -45,21 +48,23 @@ class Motions:
         self.filename = filename
         self.head = Position()
         self.tail = Position()
-        self.tail_positions = [self.tail]
+        self.tail_history = []
+        self.save_tail_history()
 
     def play(self) -> None:
         for direction, length in self.get_motions():
             self.move_head_length(direction, length)
 
-    def move_head_length(self, direction, length) -> None:
+    def move_head_length(self, direction: str, length: int) -> None:
         for _ in range(length):
             self.move_head(direction)
 
-    def move_head(self, direction):
+    def move_head(self, direction: str):
+        old_head = self.head.copy()
         self.head.move(*self.DIRECTIONS[direction])
-        if not self.head.is_touching():
-            self.move_tail()
-        self.printmap()
+        if not self.head.is_touching(self.tail):
+            self.tail = old_head
+        self.save_tail_history()
 
     def move_tail(self):
         pass
@@ -70,6 +75,9 @@ class Motions:
                 direction, length = line.split(" ")
                 yield direction, int(length)
 
+    def save_tail_history(self) -> None:
+        self.tail_history.append(self.tail)
+
     def printmap(self):
         print(self.head)
 
@@ -77,8 +85,9 @@ class Motions:
 def part_one(filename: str) -> int:
     motions = Motions(filename)
     motions.play()
+    answer = len(set([(elem.x, elem.y) for elem in motions.tail_history]))
     # Code
-    return
+    return answer
 
 
 def part_two(filename: str) -> int:
@@ -87,8 +96,8 @@ def part_two(filename: str) -> int:
 
 
 def main() -> None:
-    input_filename = f"day_{DAY}_input_sample.txt"
-    # input_filename = f"day_{DAY}_input.txt"
+    # input_filename = f"day_{DAY}_input_sample.txt"
+    input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf():
         print(f"Day {DAY} Part One")
