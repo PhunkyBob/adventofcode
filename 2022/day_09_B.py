@@ -18,6 +18,7 @@ DAY = "09"
 from aoc_performance import aoc_perf
 from dataclasses import dataclass
 from typing import List
+from collections import defaultdict
 
 
 @dataclass
@@ -40,28 +41,67 @@ class Motions:
     knots: List["Position"]
     tail_history: List[Position]
     filename: str
+    bounds: List[List[int]]
 
     DIRECTIONS: dict = {"R": (1, 0), "L": (-1, 0), "U": (0, 1), "D": (0, -1)}
 
-    def __init__(self, filename, knots: int = 2) -> None:
+    def __init__(self, filename, knots: int = 2, debug=False) -> None:
         self.filename = filename
-        self.knots = [Position()] * knots
+        self.knots = [Position() for _ in range(knots)]
         self.tail_history = []
+        self.debug = debug
+        self.get_bounds()
+        if self.debug:
+            print("=== Initial state ===")
+            self.printmap()
         self.save_tail_history()
+
+    def get_bounds(self) -> None:
+        if not self.debug:
+            return
+        if not self.filename:
+            return
+        min_x = max_x = min_y = max_y = 0
+        x = y = 0
+        with open(self.filename, "r") as f:
+            for line in f:
+                direction, length = line.split(" ")
+                x = x + self.DIRECTIONS[direction][0] * int(length)
+                y = y + self.DIRECTIONS[direction][1] * int(length)
+                min_x, max_x = min(min_x, x), max(max_x, x)
+                min_y, max_y = min(min_y, y), max(max_y, y)
+        self.bounds = [[min_x, max_x], [min_y, max_y]]
 
     def play(self) -> None:
         for direction, length in self.get_motions():
+            if self.debug:
+                print(f"== {direction} {length} ==")
             self.move_head_length(direction, length)
+            self.printmap()
 
     def move_head_length(self, direction: str, length: int) -> None:
         for _ in range(length):
             self.move_head(direction)
 
     def move_head(self, direction: str):
-        old_head = self.head.copy()
-        self.head.move(*self.DIRECTIONS[direction])
-        if not self.head.is_touching(self.tail):
-            self.tail = old_head
+        memory_knot = self.knots[0].copy()
+        self.knots[0].move(*self.DIRECTIONS[direction])
+        for i in range(len(self.knots) - 1):
+            previous_knot = self.knots[i].copy()
+            actual_knot = self.knots[i + 1].copy()
+            diff = abs(actual_knot.x - memory_knot.x) + abs(actual_knot.y - memory_knot.y)
+            if not previous_knot.is_touching(actual_knot):
+                if diff > 1 and previous_knot.x != actual_knot.x and previous_knot.y != actual_knot.y:
+                    self.knots[i + 1] = memory_knot
+                elif diff > 1:
+                    self.knots[i + 1].x = (actual_knot.x + previous_knot.x) / 2
+                    self.knots[i + 1].y = (actual_knot.y + previous_knot.y) / 2
+                elif diff == 1:
+                    evol_x, evol_y = previous_knot.x - memory_knot.x, previous_knot.y - memory_knot.y
+                    self.knots[i + 1].x += evol_x
+                    self.knots[i + 1].y += evol_y
+                memory_knot = actual_knot.copy()
+        # self.printmap()
         self.save_tail_history()
 
     def move_knot(self, knot):
@@ -74,37 +114,54 @@ class Motions:
                 yield direction, int(length)
 
     def save_tail_history(self) -> None:
-        self.tail_history.append(self.knots[-1])
+        self.tail_history.append(self.knots[-1].copy())
 
     def printmap(self):
-        print(self.head)
+        if not self.debug:
+            return
+        if not self.filename:
+            return
+        for y in range(self.bounds[1][1], self.bounds[1][0] - 1, -1):
+            covers = defaultdict(list)
+            for x in range(self.bounds[0][0], self.bounds[0][1] + 1):
+                display = "."
+                for i, knot in enumerate(self.knots):
+                    if knot.x == x and knot.y == y:
+                        if display == ".":
+                            display = "H" if i == 0 else i
+                        else:
+                            covers[display].append(i)
+                print(display, end="")
+            if len(covers):
+                print("   (", end="")
+                print(" ; ".join([f"{k} covers {', '.join(map(str, val))}" for k, val in covers.items()]), end="")
+                print(")", end="")
+            print()
+        print("")
 
 
 def part_one(filename: str) -> int:
     motions = Motions(filename)
     motions.play()
     answer = len(set([(elem.x, elem.y) for elem in motions.tail_history]))
-    # Code
     return answer
 
 
-def part_two(filename: str) -> int:
-    # Code
-    return
+def part_two(filename: str, debug=False) -> int:
+    motions = Motions(filename, 10, debug=debug)
+    motions.play()
+    answer = len(set([(elem.x, elem.y) for elem in motions.tail_history]))
+    return answer
 
 
 def main() -> None:
-    # input_filename = f"day_{DAY}_input_sample.txt"
+    input_filename = f"day_{DAY}_input_sample.txt"
+    input_filename = f"day_{DAY}_input_sample2.txt"
     input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf():
-        print(f"Day {DAY} Part One")
-        answer = part_one(input_filename)
-        print(f"Answer: {answer}")
-
-    with aoc_perf():
         print(f"Day {DAY} Part Two")
-        answer = part_two(input_filename)
+        answer = part_two(input_filename, debug=False)
         print(f"Answer: {answer}")
 
 
