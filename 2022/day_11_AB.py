@@ -74,13 +74,20 @@ class Monkey:
 class MonkeysPack:
     monkeys: List[Monkey]
     debug: bool
+    cool_down: bool
+    global_divisor: int
 
-    def __init__(self, filename: str, debug=False) -> None:
+    def __init__(self, filename: str, cool_down=True, debug=False) -> None:
         self.monkeys = []
         with open(filename, "r") as f:
             for monkey_txt in f.read().split("\n\n"):
                 self.monkeys.append(Monkey(monkey_txt))
         self.debug = debug
+        self.cool_down = cool_down
+        self.update_global_divisor()
+
+    def update_global_divisor(self):
+        self.global_divisor = reduce(lambda x, y: x * y, [m.throw_to_monkey_test_value for m in self.monkeys])
 
     def play_round(self):
         for monkey in self.monkeys:
@@ -90,7 +97,10 @@ class MonkeysPack:
                 monkey.inspection_count += 1
                 item = monkey.items.pop(0)
                 worry_level = monkey.operation(item)
-                new_worry_level = monkey.cool_down(worry_level)
+                new_worry_level = worry_level
+                if self.cool_down:
+                    new_worry_level = monkey.cool_down(worry_level)
+                new_worry_level = new_worry_level % self.global_divisor
                 monkey_to_throw = monkey.throw_to_monkey(new_worry_level)
                 self.monkeys[monkey_to_throw].items.append(new_worry_level)
                 if self.debug:
@@ -102,7 +112,7 @@ class MonkeysPack:
 
 
 def part_one(filename: str) -> int:
-    pack = MonkeysPack(filename, False)
+    pack = MonkeysPack(filename, debug=False)
     for _ in range(20):
         pack.play_round()
     top_n = heapq.nlargest(2, pack.monkeys, key=lambda x: x.inspection_count)
@@ -111,8 +121,12 @@ def part_one(filename: str) -> int:
 
 
 def part_two(filename: str) -> int:
-    # Code
-    return
+    pack = MonkeysPack(filename, cool_down=False, debug=False)
+    for _ in range(10_000):
+        pack.play_round()
+    top_n = heapq.nlargest(2, pack.monkeys, key=lambda x: x.inspection_count)
+    answer = reduce(lambda x, y: x.inspection_count * y.inspection_count, top_n)
+    return answer
 
 
 def main() -> None:

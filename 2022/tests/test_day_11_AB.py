@@ -53,7 +53,7 @@ def test_monkey_cool_down():
 
 
 def test_play_round():
-    pack = MonkeysPack(INPUT_SAMPLE, True)
+    pack = MonkeysPack(INPUT_SAMPLE)
     pack.play_round()
     assert pack.monkeys[0].items == [20, 23, 27, 26]
     assert pack.monkeys[1].items == [2080, 25, 167, 207, 401, 1046]
@@ -62,7 +62,7 @@ def test_play_round():
 
 
 def test_inspection_count():
-    pack = MonkeysPack(INPUT_SAMPLE, True)
+    pack = MonkeysPack(INPUT_SAMPLE, cool_down=True)
     for _ in range(20):
         pack.play_round()
     assert pack.monkeys[0].inspection_count == 101
@@ -70,12 +70,27 @@ def test_inspection_count():
     assert pack.monkeys[2].inspection_count == 7
     assert pack.monkeys[3].inspection_count == 105
 
+    pack = MonkeysPack(INPUT_SAMPLE, cool_down=False, debug=False)
+    for _ in range(20):
+        pack.play_round()
+    assert pack.monkeys[0].inspection_count == 99
+    assert pack.monkeys[1].inspection_count == 97
+    assert pack.monkeys[2].inspection_count == 8
+    assert pack.monkeys[3].inspection_count == 103
+
 
 def test_part_one():
     answer = part_one(INPUT_SAMPLE)
     assert answer == 10605
     answer = part_one(INPUT)
     assert answer == 50172
+
+
+def test_part_two():
+    answer = part_two(INPUT_SAMPLE)
+    assert answer == 2713310158
+    answer = part_two(INPUT)
+    assert answer == 11614682178
 
 
 if __name__ == "__main__":
