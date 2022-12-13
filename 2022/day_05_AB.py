@@ -69,12 +69,18 @@ def read_tops(stacks) -> str:
 def part_one(filename: str, model: str = "9000") -> int:
     stacks, instructions = read_input(filename)
     for instruction in instructions:
-        elems = []
-        for _ in range(instruction.move):
-            elems.append(stacks[instruction.m_from].pop())
-        if model == "9001":
-            elems.reverse()
-        stacks[instruction.m_to] += elems
+        if model == "9000":
+            stacks[instruction.m_to] += stacks[instruction.m_from][-instruction.move :][::-1]
+        elif model == "9001":
+            stacks[instruction.m_to] += stacks[instruction.m_from][-instruction.move :]
+        stacks[instruction.m_from] = stacks[instruction.m_from][: -instruction.move]
+
+        # elems = []
+        # for _ in range(instruction.move):
+        #     elems.append(stacks[instruction.m_from].pop())
+        # if model == "9001":
+        #     elems.reverse()
+        # stacks[instruction.m_to] += elems
         # print_stacks(stacks)
     return read_tops(stacks)
 
@@ -86,6 +92,7 @@ def part_two(filename: str) -> int:
 def main() -> None:
     input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
+    input_filename = "aoc_2022_day05_large_input.txt"
 
     with aoc_perf():
         print(f"Day {DAY} Part One")
