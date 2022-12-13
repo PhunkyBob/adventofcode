@@ -39,6 +39,8 @@ DAY = "13"
 from aoc_performance import aoc_perf
 import json
 from typing import List
+import functools
+from itertools import chain
 
 
 class PairOfPacket:
@@ -54,44 +56,87 @@ class PairOfPacket:
 
 
 class DistressSignal:
-    pairs: List[PairOfPacket]
+    items: List
+    debug: bool
 
-    def __init__(self, filename) -> None:
-        self.pairs = []
+    def __init__(self, filename, debug: bool = False) -> None:
+        self.items = []
+        self.debug = debug
         with open(filename, "r") as f:
             for pair in f.read().split("\n\n"):
-                self.pairs.append(PairOfPacket(pair.strip()))
+                pair = PairOfPacket(pair.strip(), debug)
+                self.items.append(pair.left)
+                self.items.append(pair.right)
 
     def is_right_order(self, index: int) -> bool:
         if self.debug:
-            print(f"== Pair {index+1}")
-            print(f"Compare {self.pairs[index].left} vs {self.pairs[index].right}")
-        self.pairs[index]
+            print(f"== Pair {index+1} ==")
+        return DistressSignal.is_smaller(self.items[index * 2], self.items[index * 2 + 1], debug=self.debug)
 
-    def compare(left: int | List, right: int | List) -> bool:
-        if type(left) == int and type(right) == int:
-            if left < right:
-                return True
-            elif right < left:
-                return False
+    @staticmethod
+    def is_smaller(left: int | List, right: int | List, space: int = 0, debug=False) -> bool:
+        space_filler = " " * space * 2
+        if debug:
+            print(f"{space_filler}- Compare {left} vs {right}")
+        if type(left) == int and type(right) == list:
+            if debug:
+                print(f"{space_filler}- Mixed types; convert left to [{left}] and retry comparison")
+            return DistressSignal.is_smaller([left], right, space + 1, debug)
+        if type(left) == list and type(right) == int:
+            if debug:
+                print(f"{space_filler}- Mixed types; convert right to [{right}] and retry comparison")
+            return DistressSignal.is_smaller(left, [right], space + 1, debug)
+        for index in range(min(len(left), len(right))):
+            left_item, right_item = left[index], right[index]
+            if type(left_item) == int and type(right_item) == int:
+                if debug:
+                    print(f"{space_filler}- Compare {left_item} vs {right_item}")
+                if left_item < right_item:
+                    if debug:
+                        print(f"{space_filler}- Left side is smaller, so inputs are in the right order")
+                    return True
+                elif right_item < left_item:
+                    if debug:
+                        print(f"{space_filler}- Right side is smaller, so inputs are NOT in the right order")
+                    return False
+                else:
+                    continue
             else:
-                pass
+                res = DistressSignal.is_smaller(left_item, right_item, space + 1, debug)
+                if res in [True, False]:
+                    return res
+        if len(left) < len(right):
+            if debug:
+                print(f"{space_filler}- Left side ran out of items, so inputs are in the right order")
+            return True
+        if len(left) > len(right):
+            if debug:
+                print(f"{space_filler}- Right side ran out of items, so inputs are NOT in the right order")
+            return False
+        return "?"
 
 
 def part_one(filename: str) -> int:
-    data = DistressSignal(filename)
-    # Code
-    return
+    data = DistressSignal(filename, False)
+    answer = sum([i + 1 for i in range(len(data.items) // 2) if data.is_right_order(i)])
+    return answer
 
 
 def part_two(filename: str) -> int:
-    # Code
-    return
+    FIRST_DIVIDER = [[2]]
+    SECOND_DIVIDER = [[6]]
+    data = DistressSignal(filename, False)
+    compare = lambda x, y: -1 if DistressSignal.is_smaller(x, y) else 1
+    res = sorted(list(chain(data.items, [FIRST_DIVIDER], [SECOND_DIVIDER])), key=functools.cmp_to_key(compare))
+    index_1 = res.index(FIRST_DIVIDER)
+    index_2 = res.index(SECOND_DIVIDER)
+    answer = (index_1 + 1) * (index_2 + 1)
+    return answer
 
 
 def main() -> None:
     input_filename = f"day_{DAY}_input_sample.txt"
-    # input_filename = f"day_{DAY}_input.txt"
+    input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf():
         print(f"Day {DAY} Part One")
