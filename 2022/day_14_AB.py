@@ -9,8 +9,9 @@ DAY = "14"
 
 from aoc_performance import aoc_perf
 from typing import List, Dict, Tuple, Set
-from itertools import pairwise, chain
+from itertools import pairwise
 from functools import lru_cache
+from collections import defaultdict
 
 
 @lru_cache
@@ -28,6 +29,9 @@ class Map:
     starting_point: Tuple
     walls: Set[Tuple]
     occupied: Set[Tuple]
+    last_sand: Tuple = (None, None)
+    testing: Tuple
+    next_direction: Dict
     WALL: str = "#"
     START: str = "+"
     AIR: str = "."
@@ -38,6 +42,7 @@ class Map:
         self.walls = set()
         self.starting_point = starting_point
         self.with_floor = with_floor
+        self.next_direction = {}
         self.debug = debug
         with open(input_file, "r") as f:
             for line in f:
@@ -86,12 +91,13 @@ class Map:
             return False
         if (new_x, new_y) == (x, y):
             self.occupied.add((new_x, new_y))
+            self.last_sand = (new_x, new_y)
             if self.debug:
                 self.print_map()
             return True
         return False
 
-    def get_next_available(self, x, y) -> Tuple:
+    def get_next(self, x: int, y: int) -> Tuple:
         new_x, new_y = x, y
         if not self.is_occupied(x, y + 1):
             new_x, new_y = x, y + 1
@@ -99,11 +105,23 @@ class Map:
             new_x, new_y = x - 1, y + 1
         elif not self.is_occupied(x + 1, y + 1):
             new_x, new_y = x + 1, y + 1
+        return new_x, new_y
 
+    def update_cache(self, x, y) -> None:
+        new_x, new_y = self.get_next(x, y)
+        self.next_direction[(x, y)] = (new_x, new_y)
         if new_x < self.min_x:
             self.min_x = new_x
         if new_x > self.max_x:
             self.max_x = new_x
+
+    def get_next_available(self, x, y) -> Tuple:
+        if (x, y) not in self.next_direction:
+            self.update_cache(x, y)
+        new_x, new_y = self.next_direction[(x, y)]
+        if (new_x, new_y) == self.last_sand:
+            self.update_cache(x, y)
+            new_x, new_y = self.next_direction[(x, y)]
         return new_x, new_y
 
     def is_occupied(self, x, y) -> bool:
@@ -132,7 +150,7 @@ def part_one(filename: str) -> int:
     answer = 0
     while map.drop_sand():
         answer += 1
-        map.print_map()
+        # map.print_map()
     return answer
 
 
@@ -148,7 +166,7 @@ def part_two(filename: str) -> int:
 
 def main() -> None:
     input_filename = f"day_{DAY}_input_sample.txt"
-    # input_filename = f"day_{DAY}_input.txt"
+    input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf():
         print(f"Day {DAY} Part One")
