@@ -11,7 +11,6 @@ from aoc_performance import aoc_perf
 from typing import List, Dict, Tuple, Set
 from itertools import pairwise
 from functools import lru_cache
-from collections import defaultdict
 
 
 @lru_cache
