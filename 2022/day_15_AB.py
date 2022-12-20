@@ -52,6 +52,10 @@ DAY = "15"
 from aoc_performance import aoc_perf
 from typing import List, Dict, Tuple, Set
 import re
+from shapely.geometry import Polygon
+
+# import matplotlib.pyplot as plt
+# import geopandas as gpd
 
 
 class Map:
@@ -96,8 +100,25 @@ def part_one(filename: str) -> int:
 
 
 def part_two(filename: str) -> int:
+    MAP_SIZE = 20
+    MAP_SIZE = 4_000_000
     map = Map(filename)
-    answer = 0
+    polygon = Polygon()
+    for sensor in map.sensors:
+        # For each sensor, draw the corresponding polygon.
+        x, y, d = sensor
+        new_polygon = Polygon([(x - d, y), (x, y + d), (x + d, y), (x, y - d)])
+        polygon = polygon.union(new_polygon)
+    limited_polygon = Polygon([(0, 0), (0, MAP_SIZE), (MAP_SIZE, MAP_SIZE), (MAP_SIZE, 0)])
+    result = limited_polygon.difference(polygon).bounds
+    answer_x = int(result[0]) + 1
+    answer_y = int(result[1]) + 1
+    answer = answer_x * MAP_SIZE + answer_y
+
+    # p = gpd.GeoSeries(resultat)
+    # p.plot()
+    # plt.show()
+
     return answer
 
 
