@@ -29,7 +29,7 @@ class Map:
     walls: Set[Tuple]
     occupied: Set[Tuple]
     last_sand: Tuple = (None, None)
-    testing: Tuple
+    current_drop: Tuple
     next_direction: Dict
     WALL: str = "#"
     START: str = "+"
@@ -42,6 +42,7 @@ class Map:
         self.starting_point = starting_point
         self.with_floor = with_floor
         self.next_direction = {}
+        self.current_drop = starting_point
         self.debug = debug
         with open(input_file, "r") as f:
             for line in f:
@@ -95,6 +96,25 @@ class Map:
                 self.print_map()
             return True
         return False
+
+    def drop_sand_iter(self) -> bool:
+        """Return True if sand is fixed, False if falling forever"""
+        x, y = self.starting_point
+        new_x, new_y = self.get_next_available(x, y)
+        while (new_x, new_y) != (x, y) and (y < self.max_y or self.with_floor):
+            x, y = new_x, new_y
+            new_x, new_y = self.get_next_available(x, y)
+            self.current_drop = (new_x, new_y)
+            yield f"{new_x}, {new_y}"
+
+        if self.is_occupied(new_x, new_y):
+            yield False
+        if (new_x, new_y) == (x, y):
+            self.occupied.add((new_x, new_y))
+            self.last_sand = (new_x, new_y)
+            if self.debug:
+                self.print_map()
+            yield True
 
     def get_next(self, x: int, y: int) -> Tuple:
         new_x, new_y = x, y
@@ -153,6 +173,17 @@ def part_one(filename: str) -> int:
     return answer
 
 
+def part_one_step_by_step(filename: str) -> int:
+    map = Map(filename, debug=False)
+    answer = 0
+    while i := iter(map.drop_sand_iter()):
+        if list(i)[-1] != True:
+            break
+        answer += 1
+        # map.print_map()
+    return answer
+
+
 def part_two(filename: str) -> int:
     map = Map(filename, with_floor=True, debug=False)
     answer = 0
@@ -170,6 +201,11 @@ def main() -> None:
     with aoc_perf():
         print(f"Day {DAY} Part One")
         answer = part_one(input_filename)
+        print(f"Answer: {answer}")
+
+    with aoc_perf():
+        print(f"Day {DAY} Part One")
+        answer = part_one_step_by_step(input_filename)
         print(f"Answer: {answer}")
 
     with aoc_perf():
