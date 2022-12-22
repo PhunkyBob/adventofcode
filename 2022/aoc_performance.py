@@ -25,7 +25,7 @@ class aoc_perf:
             tracemalloc.stop()
         if self.time:
             finish_time = perf_counter()
-            print(f"Time elapsed is seconds: {finish_time - self.start_time:.6f}")
+            print(f"Time elapsed in seconds: {finish_time - self.start_time:.6f}")
             print()
 
 
@@ -48,7 +48,7 @@ def aoc_performance(title: str = "", time: bool = True, memory: bool = False):
                 tracemalloc.stop()
             if time:
                 finish_time = perf_counter()
-                print(f"Time elapsed is seconds: {finish_time - start_time:.6f}")
+                print(f"Time elapsed in seconds: {finish_time - start_time:.6f}")
             # print(f"Function: {func.__name__}")
             # print(f"Method: {func.__doc__}")
 
