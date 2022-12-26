@@ -28,36 +28,66 @@ to another cube, the total surface area is 64.
 DAY = "18"
 
 from aoc_performance import aoc_perf
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Set
+
+directions = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
 
 
-def read_input(filename: str):
-    data: List[Tuple[int, int, int]] = []
-    with open(filename, "r") as f:
-        for line in map(lambda x: x.strip(), f):
-            x, y, z = map(int, line.split(","))
-            data.append((x, y, z))
+def read_input(filename: str) -> Set[Tuple[int, int, int]]:
+    data: Set[Tuple[int, int, int]] = {tuple(map(int, line.split(","))) for line in open(filename, "r")}
     return data
 
 
-def part_one(filename: str) -> int:
-    data = read_input(filename)
-    directions = [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]
+def count_exposed(existing_cubes: Set[Tuple[int, int, int]], explore_space: Set[Tuple[int, int, int]] = None) -> int:
     sides_exposed = 0
-    for cube in data:
+    for cube in existing_cubes:
+        touche_aucun = True
         for dir in directions:
             test_x = cube[0] + dir[0]
             test_y = cube[1] + dir[1]
             test_z = cube[2] + dir[2]
-            if (test_x, test_y, test_z) not in data:
-                sides_exposed += 1
+            if explore_space:
+                if (test_x, test_y, test_z) in explore_space:
+                    sides_exposed += 1
+                    touche_aucun = False
+            else:
+                if (test_x, test_y, test_z) not in existing_cubes:
+                    sides_exposed += 1
     return sides_exposed
+
+
+def part_one(filename: str) -> int:
+    data = read_input(filename)
+    answer = count_exposed(data)
+    return answer
 
 
 def part_two(filename: str) -> int:
     data = read_input(filename)
-    # Code
-    return
+
+    min_x, min_y, min_z = list(map(min, zip(*data)))
+    max_x, max_y, max_z = list(map(max, zip(*data)))
+
+    cubes_to_test: Set[Tuple[int, int, int]] = set()
+    cubes_to_test.add((min_x - 1, min_y - 1, min_z - 1))
+    cubes_outside: Set[Tuple[int, int, int]] = set()
+
+    while cubes_to_test:
+        x, y, z = cubes_to_test.pop()
+        cubes_outside.add((x, y, z))
+        for dir in directions:
+            test_x = x + dir[0]
+            test_y = y + dir[1]
+            test_z = z + dir[2]
+            if (
+                min_x - 1 <= test_x <= max_x + 1
+                and min_y - 1 <= test_y <= max_y + 1
+                and min_z - 1 <= test_z <= max_z + 1
+            ):
+                if (test_x, test_y, test_z) not in data and (test_x, test_y, test_z) not in cubes_outside:
+                    cubes_to_test.add((test_x, test_y, test_z))
+    answer = count_exposed(data, cubes_outside)
+    return answer
 
 
 def main() -> None:
