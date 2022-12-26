@@ -47,11 +47,11 @@ def main() -> None:
     global already_drawn
     display_width = 1024
     display_height = 800
-    input_filename = f"day_14_input_sample.txt"
-    input_filename = f"day_14_input.txt"
-    map: Map = Map(input_filename, with_floor=False, debug=False)
-    map_width = map.max_x - map.min_x + 1
-    map_height = map.max_y - map.min_y + 1
+    input_filename = "day_14_input_sample.txt"
+    input_filename = "day_14_input.txt"
+    my_map: Map = Map(input_filename, with_floor=False, debug=False)
+    map_width = my_map.max_x - my_map.min_x + 1
+    map_height = my_map.max_y - my_map.min_y + 1
     ratio = min([display_width // map_width, display_height // map_height])
 
     pygame_icon = pygame.image.load("adventofcode.png")
@@ -69,7 +69,7 @@ def main() -> None:
     number_sand = 0
     previous = None
     win.fill((0, 0, 0))
-    draw_walls(win, map, ratio)
+    draw_walls(win, my_map, ratio)
     pygame.display.update()
     pygame.time.delay(2000)
     while run:
@@ -77,26 +77,23 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 run = False
 
-        draw_sand(win, map, ratio)
+        draw_sand(win, my_map, ratio)
         draw_score(win, number_sand)
 
         # drawing object on screen which is rectangle here
         if not continue_drop_sand:
             win.fill((0, 0, 0))
-            draw_walls(win, map, ratio)
+            draw_walls(win, my_map, ratio)
             already_drawn = set()
-            draw_sand(win, map, ratio)
+            draw_sand(win, my_map, ratio)
             draw_score(win, number_sand - 1)
             pygame.display.update()
             pygame.time.delay(100)
             continue
         number_sand += 1
         previous = None
-        for res in map.drop_sand_iter():
-            if previous:
-                # clean_rect(win, previous)
-                pass
-            previous = draw_current_sand(win, map, ratio)
+        for res in my_map.drop_sand_iter():
+            previous = draw_current_sand(win, my_map, ratio)
             pygame.display.update()
             # pygame.time.delay(5)
 

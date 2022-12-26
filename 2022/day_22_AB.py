@@ -44,9 +44,9 @@ class Map:
     orientation: Deque = deque(["R", "D", "L", "U"])
 
     def __init__(self, filename: str) -> None:
-        self.walls = set()
-        self.open_tiles = set()
-        self.instructions = list()
+        self.walls: Set = set()
+        self.open_tiles: Set = set()
+        self.instructions: List = []
         with open(filename, "r") as f:
             map_str, instructions = f.read().split("\n\n")
         self.read_map(map_str)
@@ -65,11 +65,10 @@ class Map:
         )
 
     def get_initial_position(self, map_str: str) -> None:
-        self.position = (0, 0)
-        for x, val in enumerate(map_str.split("\n")[0]):
-            if val == ".":
-                self.position = (x, 0)
-                break
+        self.position = next(
+            ((x, 0) for x, val in enumerate(map_str.split("\n")[0]) if val == "."),
+            (0, 0),
+        )
 
     def read_instructions(self, instructions: str) -> None:
         self.instructions = list(map(lambda x: int(x) if x.isdigit() else x, re.findall("(\d+|\w)", instructions)))
@@ -87,14 +86,12 @@ class Map:
                 (new_position[0] + dir_x) % self.map_width,
                 (new_position[1] + dir_y) % self.map_height,
             )
-        if new_position in self.open_tiles:
-            return new_position
-        return position
+        return new_position if new_position in self.open_tiles else position
 
     def turn(self, direction: str) -> None:
         if direction == "R":
             self.orientation.rotate(-1)
-        if direction == "L":
+        elif direction == "L":
             self.orientation.rotate(1)
 
     # def follow_instructions_iter(self) -> Tuple:
@@ -123,10 +120,7 @@ def part_one(filename: str) -> int:
     my_map.follow_instructions()
     x = my_map.position[0] + 1
     y = my_map.position[1] + 1
-    answer = 1000 * y + 4 * x + facing_values[my_map.orientation[0]]
-
-    # Code
-    return answer
+    return 1000 * y + 4 * x + facing_values[my_map.orientation[0]]
 
 
 def part_two(filename: str) -> int:

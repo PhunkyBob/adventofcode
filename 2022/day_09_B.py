@@ -130,15 +130,13 @@ class Motions:
 def part_one(filename: str) -> int:
     motions = Motions(filename)
     motions.play()
-    answer = len(set([(elem.x, elem.y) for elem in motions.tail_history]))
-    return answer
+    return len({(elem.x, elem.y) for elem in motions.tail_history})
 
 
 def part_two(filename: str, debug=False) -> int:
     motions = Motions(filename, 10, debug=debug)
     motions.play()
-    answer = len(set([(elem.x, elem.y) for elem in motions.tail_history]))
-    return answer
+    return len({(elem.x, elem.y) for elem in motions.tail_history})
 
 
 def main() -> None:

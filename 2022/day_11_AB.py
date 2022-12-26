@@ -45,19 +45,18 @@ class Monkey:
             self.operation = lambda x: x * x
             self.operation_name = "multiplied"
             self.operation_value = "itself"
+        elif res[1] == "+":
+            self.operation = lambda x: x + int(res[2])
+            self.operation_name = "increased"
+            self.operation_value = res[2]
+        elif res[1] == "*":
+            self.operation = lambda x: x * int(res[2])
+            self.operation_name = "multiplied"
+            self.operation_value = res[2]
         else:
-            if res[1] == "+":
-                self.operation = lambda x: x + int(res[2])
-                self.operation_name = "increased"
-                self.operation_value = res[2]
-            elif res[1] == "*":
-                self.operation = lambda x: x * int(res[2])
-                self.operation_name = "multiplied"
-                self.operation_value = res[2]
-            else:
-                self.operation = lambda x: x
-                self.operation_name = "???"
-                self.operation_value = "???"
+            self.operation = lambda x: x
+            self.operation_name = "???"
+            self.operation_value = "???"
         res_test = re.search("Test: divisible by (\d+)", monkey_txt)
         self.throw_to_monkey_test_value = int(res_test[1])
         res_true = re.search("If true: throw to monkey (\d+)", monkey_txt)
@@ -80,8 +79,7 @@ class MonkeysPack:
     def __init__(self, filename: str, cool_down=True, debug=False) -> None:
         self.monkeys = []
         with open(filename, "r") as f:
-            for monkey_txt in f.read().split("\n\n"):
-                self.monkeys.append(Monkey(monkey_txt))
+            self.monkeys.extend(Monkey(monkey_txt) for monkey_txt in f.read().split("\n\n"))
         self.debug = debug
         self.cool_down = cool_down
         self.update_global_divisor()
@@ -116,8 +114,7 @@ def part_one(filename: str) -> int:
     for _ in range(20):
         pack.play_round()
     top_n = heapq.nlargest(2, pack.monkeys, key=lambda x: x.inspection_count)
-    answer = reduce(lambda x, y: x.inspection_count * y.inspection_count, top_n)
-    return answer
+    return reduce(lambda x, y: x.inspection_count * y.inspection_count, top_n)
 
 
 def part_two(filename: str) -> int:
@@ -125,8 +122,7 @@ def part_two(filename: str) -> int:
     for _ in range(10_000):
         pack.play_round()
     top_n = heapq.nlargest(2, pack.monkeys, key=lambda x: x.inspection_count)
-    answer = reduce(lambda x, y: x.inspection_count * y.inspection_count, top_n)
-    return answer
+    return reduce(lambda x, y: x.inspection_count * y.inspection_count, top_n)
 
 
 def main() -> None:

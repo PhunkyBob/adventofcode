@@ -50,13 +50,11 @@ folders = defaultdict(lambda: {"files": {}, "folders": {}})
 @lru_cache
 def calculate_total_size(starts_with: str) -> int:
     size_dir = sum(folders[starts_with]["files"].values())
-    size_sub_dir = 0
-    for dir in folders[starts_with]["folders"]:
-        size_sub_dir += calculate_total_size(f"{starts_with}/{dir}")
+    size_sub_dir = sum(calculate_total_size(f"{starts_with}/{dir}") for dir in folders[starts_with]["folders"])
     return size_dir + size_sub_dir
 
 
-def init_folders(filename: str) -> None:
+def init_folders(filename: str) -> None:  # sourcery skip: remove-pass-elif
     global folders
     folders = defaultdict(lambda: {"files": {}, "folders": {}})
     current_folder = []
@@ -101,9 +99,8 @@ def part_two(filename: str) -> int:
     min_folder, min_folder_size = "/", root_size
     for folder in folders:
         size = calculate_total_size(folder)
-        if available_disk_space + size > UNUSED_SPACE_NEEDED:
-            if size < min_folder_size:
-                min_folder, min_folder_size = folder, size
+        if available_disk_space + size > UNUSED_SPACE_NEEDED and size < min_folder_size:
+            min_folder, min_folder_size = folder, size
     return min_folder, min_folder_size
 
 

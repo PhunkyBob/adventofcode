@@ -165,29 +165,26 @@ class Map:
 
 
 def part_one(filename: str) -> int:
-    map = Map(filename, debug=False)
+    my_map = Map(filename, debug=False)
     answer = 0
-    while map.drop_sand():
+    while my_map.drop_sand():
         answer += 1
         # map.print_map()
     return answer
 
 
 def part_one_step_by_step(filename: str) -> int:
-    map = Map(filename, debug=False)
+    my_map = Map(filename, debug=False)
     answer = 0
-    while i := iter(map.drop_sand_iter()):
-        if list(i)[-1] != True:
-            break
+    while (i := iter(my_map.drop_sand_iter())) and list(i)[-1] == True:
         answer += 1
-        # map.print_map()
     return answer
 
 
 def part_two(filename: str) -> int:
-    map = Map(filename, with_floor=True, debug=False)
+    my_map = Map(filename, with_floor=True, debug=False)
     answer = 0
-    while map.drop_sand():
+    while my_map.drop_sand():
         # if answer % 100 == 0:
         #     map.print_map()
         answer += 1

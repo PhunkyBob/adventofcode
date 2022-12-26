@@ -41,25 +41,20 @@ def read_input(filename: str) -> Set[Tuple[int, int, int]]:
 def count_exposed(existing_cubes: Set[Tuple[int, int, int]], explore_space: Set[Tuple[int, int, int]] = None) -> int:
     sides_exposed = 0
     for cube in existing_cubes:
-        touche_aucun = True
         for dir in directions:
             test_x = cube[0] + dir[0]
             test_y = cube[1] + dir[1]
             test_z = cube[2] + dir[2]
-            if explore_space:
-                if (test_x, test_y, test_z) in explore_space:
-                    sides_exposed += 1
-                    touche_aucun = False
-            else:
-                if (test_x, test_y, test_z) not in existing_cubes:
-                    sides_exposed += 1
+            if explore_space and (test_x, test_y, test_z) in explore_space:
+                sides_exposed += 1
+            if not explore_space and (test_x, test_y, test_z) not in existing_cubes:
+                sides_exposed += 1
     return sides_exposed
 
 
 def part_one(filename: str) -> int:
     data = read_input(filename)
-    answer = count_exposed(data)
-    return answer
+    return count_exposed(data)
 
 
 def part_two(filename: str) -> int:
@@ -68,8 +63,7 @@ def part_two(filename: str) -> int:
     min_x, min_y, min_z = list(map(min, zip(*data)))
     max_x, max_y, max_z = list(map(max, zip(*data)))
 
-    cubes_to_test: Set[Tuple[int, int, int]] = set()
-    cubes_to_test.add((min_x - 1, min_y - 1, min_z - 1))
+    cubes_to_test: Set[Tuple[int, int, int]] = {(min_x - 1, min_y - 1, min_z - 1)}
     cubes_outside: Set[Tuple[int, int, int]] = set()
 
     while cubes_to_test:
@@ -83,11 +77,11 @@ def part_two(filename: str) -> int:
                 min_x - 1 <= test_x <= max_x + 1
                 and min_y - 1 <= test_y <= max_y + 1
                 and min_z - 1 <= test_z <= max_z + 1
+                and (test_x, test_y, test_z) not in data
+                and (test_x, test_y, test_z) not in cubes_outside
             ):
-                if (test_x, test_y, test_z) not in data and (test_x, test_y, test_z) not in cubes_outside:
-                    cubes_to_test.add((test_x, test_y, test_z))
-    answer = count_exposed(data, cubes_outside)
-    return answer
+                cubes_to_test.add((test_x, test_y, test_z))
+    return count_exposed(data, cubes_outside)
 
 
 def main() -> None:

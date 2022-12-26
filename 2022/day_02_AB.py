@@ -63,7 +63,7 @@ def outcome_to_score(outcome: str) -> dict:
     header = lines[1]
     for line in lines[2:-1]:  # Remove header and footer
         for i in range(1, 4):
-            outcome_dict[line[0] + " " + header[i]] = int(line[i])
+            outcome_dict[f"{line[0]} {header[i]}"] = int(line[i])
     return outcome_dict
 
 

@@ -76,28 +76,30 @@ class DistressSignal:
     @staticmethod
     def is_smaller(left: int | List, right: int | List, space: int = 0, debug=False) -> bool:
         space_filler = " " * space * 2
-        if debug:
-            print(f"{space_filler}- Compare {left} vs {right}")
+        DistressSignal.print_debug(f"{space_filler}- Compare {left} vs {right}", debug)
         if type(left) == int and type(right) == list:
-            if debug:
-                print(f"{space_filler}- Mixed types; convert left to [{left}] and retry comparison")
+            DistressSignal.print_debug(
+                f"{space_filler}- Mixed types; convert left to [{left}] and retry comparison", debug
+            )
             return DistressSignal.is_smaller([left], right, space + 1, debug)
         if type(left) == list and type(right) == int:
-            if debug:
-                print(f"{space_filler}- Mixed types; convert right to [{right}] and retry comparison")
+            DistressSignal.print_debug(
+                f"{space_filler}- Mixed types; convert right to [{right}] and retry comparison", debug
+            )
             return DistressSignal.is_smaller(left, [right], space + 1, debug)
         for index in range(min(len(left), len(right))):
             left_item, right_item = left[index], right[index]
             if type(left_item) == int and type(right_item) == int:
-                if debug:
-                    print(f"{space_filler}- Compare {left_item} vs {right_item}")
+                DistressSignal.print_debug(f"{space_filler}- Compare {left_item} vs {right_item}", debug)
                 if left_item < right_item:
-                    if debug:
-                        print(f"{space_filler}- Left side is smaller, so inputs are in the right order")
+                    DistressSignal.print_debug(
+                        f"{space_filler}- Left side is smaller, so inputs are in the right order", debug
+                    )
                     return True
                 elif right_item < left_item:
-                    if debug:
-                        print(f"{space_filler}- Right side is smaller, so inputs are NOT in the right order")
+                    DistressSignal.print_debug(
+                        f"{space_filler}- Right side is smaller, so inputs are NOT in the right order", debug
+                    )
                     return False
                 else:
                     continue
@@ -106,20 +108,26 @@ class DistressSignal:
                 if res in [True, False]:
                     return res
         if len(left) < len(right):
-            if debug:
-                print(f"{space_filler}- Left side ran out of items, so inputs are in the right order")
+            DistressSignal.print_debug(
+                f"{space_filler}- Left side ran out of items, so inputs are in the right order", debug
+            )
             return True
         if len(left) > len(right):
-            if debug:
-                print(f"{space_filler}- Right side ran out of items, so inputs are NOT in the right order")
+            DistressSignal.print_debug(
+                f"{space_filler}- Right side ran out of items, so inputs are NOT in the right order", debug
+            )
             return False
         return "?"
+
+    @staticmethod
+    def print_debug(string: str, debug: bool = True) -> None:
+        if debug:
+            print(string)
 
 
 def part_one(filename: str) -> int:
     data = DistressSignal(filename, False)
-    answer = sum([i + 1 for i in range(len(data.items) // 2) if data.is_right_order(i)])
-    return answer
+    return sum(i + 1 for i in range(len(data.items) // 2) if data.is_right_order(i))
 
 
 def part_two(filename: str) -> int:
@@ -130,8 +138,7 @@ def part_two(filename: str) -> int:
     res = sorted(list(chain(data.items, [FIRST_DIVIDER], [SECOND_DIVIDER])), key=functools.cmp_to_key(compare))
     index_1 = res.index(FIRST_DIVIDER)
     index_2 = res.index(SECOND_DIVIDER)
-    answer = (index_1 + 1) * (index_2 + 1)
-    return answer
+    return (index_1 + 1) * (index_2 + 1)
 
 
 def main() -> None:

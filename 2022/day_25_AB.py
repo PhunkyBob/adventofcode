@@ -32,10 +32,7 @@ snafu_digits: Dict = {"2": 2, "1": 1, "0": 0, "-": -1, "=": -2}
 
 
 def snafu_to_int(input: str) -> int:
-    result = 0
-    for pos, char in enumerate(reversed(input.strip())):
-        result += snafu_digits[char] * (5**pos)
-    return result
+    return sum(snafu_digits[char] * (5**pos) for pos, char in enumerate(reversed(input.strip())))
 
 
 def int_to_snafu(input: int) -> str:
@@ -47,8 +44,7 @@ def int_to_snafu(input: int) -> str:
 
 def part_one(filename: str) -> int:
     int_result = sum(map(snafu_to_int, [line.strip() for line in open(filename, "r")]))
-    answer = int_to_snafu(int_result)
-    return answer
+    return int_to_snafu(int_result)
 
 
 def part_two(filename: str) -> int:

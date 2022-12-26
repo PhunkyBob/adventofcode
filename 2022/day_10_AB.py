@@ -43,7 +43,7 @@ def is_print_pixel(cycle: int, x: int) -> bool:
 
 
 def print_sprite_position(x: int) -> None:
-    print(f"Sprite position:", "".join(["#" if abs(i - x) <= 1 else "." for i in range(40)]))
+    print("Sprite position:", "".join(["#" if abs(i - x) <= 1 else "." for i in range(40)]))
 
 
 def print_sprites(filename: str, debug=False) -> None:
@@ -77,10 +77,7 @@ def print_sprites(filename: str, debug=False) -> None:
 
 
 def part_one(filename: str) -> int:
-    total_strength = 0
-    for cycle, value in get_signal_strength(filename):
-        total_strength += cycle * value
-    return total_strength
+    return sum(cycle * value for cycle, value in get_signal_strength(filename))
 
 
 def part_two(filename: str) -> None:

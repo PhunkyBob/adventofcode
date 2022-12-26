@@ -69,7 +69,7 @@ def part_two(filename: str) -> int:
         if data[key].isdigit() or data[key][0] == "(":
             return data[key]
         left, operation, right = data[key].split(" ")
-        result = "(" + get_equation(left) + operation + get_equation(right) + ")"
+        result = f"({get_equation(left)}{operation}{get_equation(right)})"
         data[key] = result
         return result
 
