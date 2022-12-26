@@ -82,7 +82,7 @@ class Map:
             (new_position[0] + dir_x) % self.map_width,
             (new_position[1] + dir_y) % self.map_height,
         )
-        while new_position not in self.walls | self.open_tiles:
+        while new_position not in self.walls and new_position not in self.open_tiles:
             new_position = (
                 (new_position[0] + dir_x) % self.map_width,
                 (new_position[1] + dir_y) % self.map_height,
