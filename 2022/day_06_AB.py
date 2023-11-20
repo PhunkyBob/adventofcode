@@ -22,6 +22,7 @@ def read_input(filename: str):
 
 
 def find_position(data: str, header_size: int = 4) -> int:
+    # sourcery skip: use-assigned-variable
     first_n: List[str] = list(data[:header_size])
     pos: int = header_size
     while len(set(first_n)) != header_size:

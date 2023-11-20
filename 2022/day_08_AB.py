@@ -72,8 +72,7 @@ class Map:
     def __init__(self, filename) -> None:
         self.trees = []
         with open(filename, "r") as f:
-            for line in map(lambda x: x.strip(), f):
-                self.trees.append([Tree(int(char)) for char in line])
+            self.trees.extend([Tree(int(char)) for char in line] for line in map(lambda x: x.strip(), f))
 
     def __str__(self) -> str:
         value: str = ""
@@ -129,17 +128,15 @@ class Map:
 
 
 def part_one(filename: str) -> int:
-    map = Map(filename)
-    map.update_visible_from()
-    answer = sum([tree.is_visible() for line in map.trees for tree in line])
-    return answer
+    my_map = Map(filename)
+    my_map.update_visible_from()
+    return sum(tree.is_visible() for line in my_map.trees for tree in line)
 
 
 def part_two(filename: str) -> int:
-    map = Map(filename)
-    map.update_viewing_distance()
-    answer = max(tree.scenic_score() for tree in map.iter())
-    return answer
+    my_map = Map(filename)
+    my_map.update_viewing_distance()
+    return max(tree.scenic_score() for tree in my_map.iter())
 
 
 def main() -> None:

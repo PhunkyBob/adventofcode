@@ -77,20 +77,16 @@ class Map:
     def distance_start_best(self) -> int:
         if not self.graph:
             self.generate_graph()
-        distance = len(nx.shortest_path(self.graph, self.best_signal, self.start)) - 1
-        return distance
+        return len(nx.shortest_path(self.graph, self.best_signal, self.start)) - 1
 
     def distance_best_a(self) -> int:
         if not self.graph:
             self.generate_graph()
-        min_distance = min(
-            [
-                value
-                for elem, value in nx.single_source_shortest_path_length(self.graph, self.best_signal).items()
-                if elem in self.list_a
-            ]
+        return min(
+            value
+            for elem, value in nx.single_source_shortest_path_length(self.graph, self.best_signal).items()
+            if elem in self.list_a
         )
-        return min_distance
 
     def save_map(self, filename):
         map_distance = nx.single_source_shortest_path_length(self.graph, self.best_signal)
@@ -103,15 +99,13 @@ class Map:
 
 
 def part_one(filename: str) -> int:
-    map = Map(filename)
-    answer = map.distance_start_best()
-    return answer
+    my_map = Map(filename)
+    return my_map.distance_start_best()
 
 
 def part_two(filename: str) -> int:
-    map = Map(filename)
-    answer = map.distance_best_a()
-    return answer
+    my_map = Map(filename)
+    return my_map.distance_best_a()
 
 
 def main() -> None:

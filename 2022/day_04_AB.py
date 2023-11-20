@@ -45,8 +45,7 @@ def get_assignments(input: str) -> set:
     10, 11, 12, 13
     """
     from_idx, to_idx = map(lambda x: int(x), input.split("-"))
-    assignment = set(i for i in range(from_idx, to_idx + 1))
-    return assignment
+    return set(range(from_idx, to_idx + 1))
 
 
 def part_one(filename: str) -> int:

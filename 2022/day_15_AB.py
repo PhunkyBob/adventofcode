@@ -89,15 +89,15 @@ class Map:
 
 
 def part_one(filename: str, line_search: int = 10) -> int:
-    map = Map(filename)
-    answer: int = map.count_not_beacon_on_line(line_search)
+    my_map = Map(filename)
+    answer: int = my_map.count_not_beacon_on_line(line_search)
     return answer
 
 
 def part_two(filename: str, map_size: int = 20, tuning_frequency: int = 4_000_000, plot: bool = False) -> int:
-    map = Map(filename)
+    my_map = Map(filename)
     polygon = Polygon()
-    for sensor in map.sensors:
+    for sensor in my_map.sensors:
         # For each sensor, draw the corresponding polygon.
         x, y, d = sensor
         new_polygon = Polygon([(x - d, y), (x, y + d), (x + d, y), (x, y - d)])
@@ -123,8 +123,7 @@ def part_two(filename: str, map_size: int = 20, tuning_frequency: int = 4_000_00
         plt.plot(answer_x, answer_y, "+", color="black")
         plt.text(answer_x, answer_y, f"distress beacon\n  x: {answer_x}\n  y: {answer_y}", fontsize=14, color="black")
         plt.show()
-    answer = answer_x * tuning_frequency + answer_y
-    return answer
+    return answer_x * tuning_frequency + answer_y
 
 
 def main() -> None:
