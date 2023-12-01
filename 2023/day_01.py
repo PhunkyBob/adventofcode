@@ -14,13 +14,23 @@ treb7uchet
 
 In this example, the calibration values of these four lines are 12, 38, 15, and 77. Adding these together produces 142.
 """
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Dict
 from aoc_performance import aoc_perf
 from aoc_utils import compose
 import re
 
 DAY = "01"
-MAP_DIGITS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
+MAP_DIGITS: Dict[str, str] = {
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9",
+}
 
 
 def replace_digits(text: str) -> str:
