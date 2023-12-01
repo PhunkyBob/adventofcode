@@ -1,4 +1,4 @@
-from day_01 import part_A, part_B, replace_digits, get_first_and_last, keep_only_digits
+from day_01 import part_A, part_B, replace_digits, get_first_and_last, keep_only_digits, get_first_and_last_re_part_B
 
 
 def test_part_A() -> None:
@@ -8,6 +8,15 @@ def test_part_A() -> None:
 def test_apply_transformation() -> None:
     assert replace_digits("two1nine") == "two2two1nine9nine"
     assert replace_digits("eightwothree") == "eight8eightwo2twothree3three"
+
+
+def test_get_first_and_last_re_part_B() -> None:
+    assert get_first_and_last_re_part_B("two1nine") == "29"
+    assert get_first_and_last_re_part_B("eightwo") == "82"
+    assert get_first_and_last_re_part_B("eightwone") == "81"
+    assert get_first_and_last_re_part_B("eightwone3") == "83"
+    assert get_first_and_last_re_part_B("1eightwone") == "11"
+    assert get_first_and_last_re_part_B("1eightwot3") == "13"
 
 
 def test_part_B() -> None:
