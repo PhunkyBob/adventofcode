@@ -52,6 +52,15 @@ def read_file(filename: str) -> List[List[str]]:
 
 
 def convert(data: List[List[str]]) -> Tuple[List[Number], List[Symbol]]:
+    """
+    Convert the given data into a list of numbers and symbols.
+
+    Args:
+        data (List[List[str]]): The input data.
+
+    Returns:
+        Tuple[List[Number], List[Symbol]]: A tuple containing the list of numbers and symbols.
+    """
     numbers = []
     symbols = []
     for y, line in enumerate(data):
@@ -71,14 +80,25 @@ def convert(data: List[List[str]]) -> Tuple[List[Number], List[Symbol]]:
     return numbers, symbols
 
 
+from typing import List
+
+
 def get_numbers_near_symbol(numbers: List[Number], symbols: List[Symbol]) -> List[int]:
+    """
+    Returns a list of numbers that are near any symbol.
+    """
     near: List[int] = []
     for symbol in symbols:
         near += [n.value for n in numbers if n.x - 1 <= symbol.x <= n.x_max + 1 and abs(n.y - symbol.y) <= 1]
     return near
 
 
-def get_gear_ratio(numbers: List[Number], symbols: List[Symbol]) -> int:
+def get_total_gear_ratio(numbers: List[Number], symbols: List[Symbol]) -> int:
+    """
+    Calculate the total gear ratio based on the given numbers and symbols.
+    Gear ratio is calculated by multiplying the two numbers that are near a symbol only when there are
+    2-and-only-2 numbers near the symbol '*'.
+    """
     total_gear_ratio = 0
     for symbol in symbols:
         if symbol.value != "*":
@@ -99,7 +119,7 @@ def part_A(input_filename: str) -> int:
 def part_B(input_filename: str) -> int:
     data = read_file(input_filename)
     numbers, symbols = convert(data)
-    return get_gear_ratio(numbers, symbols)
+    return get_total_gear_ratio(numbers, symbols)
 
 
 def main() -> None:
