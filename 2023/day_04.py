@@ -26,6 +26,7 @@ So, in this example, the Elf's pile of scratchcards is worth 13 points.
 from typing import List
 from aoc_performance import aoc_perf
 import re
+from collections import deque
 
 DAY = "04"
 
@@ -54,13 +55,13 @@ def part_A(input_filename: str) -> int:
 
 def part_B(input_filename: str) -> int:
     result: List[int] = []
-    next_cards_must_copy = [0]
+    next_cards_must_copy = deque([0])
     with open(input_filename) as f:
         for line in f:
             if elems := re.match(r"(.+):(.+)\|(.+)", line):
                 winning_numbers = set(map(int, filter(None, elems[2].strip().split(" "))))
                 played_numbers = set(map(int, filter(None, elems[3].strip().split(" "))))
-                this_card_occurence = next_cards_must_copy.pop(0) + 1 if next_cards_must_copy else 1
+                this_card_occurence = next_cards_must_copy.popleft() + 1 if next_cards_must_copy else 1
                 for i in range(len(winning_numbers.intersection(played_numbers))):
                     if i < len(next_cards_must_copy):
                         next_cards_must_copy[i] += this_card_occurence
