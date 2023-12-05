@@ -40,14 +40,13 @@ def part_B(input_filename: str) -> int:
     with open(input_filename, "r") as input_file:
         input_data = input_file.read().splitlines()
     seeds = [int(x) for x in input_data[0].split(":")[-1].split(" ") if x]
-    chunks: Deque[Chunk] = deque()
     new_destinations: Deque[Chunk] = deque([Chunk(int(x[0]), int(x[1])) for x in zip(seeds[::2], seeds[1::2])])
+    chunks: Deque[Chunk] = deque()
     to_process = deque()
     # new_destinations: Deque[Chunk] = deque()
     for line in input_data[1:]:
         if "map" in line:
-            print(line)
-            # new_destinations += chunks
+            # print(line)
             to_process += new_destinations
             new_destinations: Deque[Chunk] = deque()
             continue
