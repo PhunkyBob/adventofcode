@@ -43,7 +43,6 @@ def part_B(input_filename: str) -> int:
     new_destinations: Deque[Chunk] = deque([Chunk(int(x[0]), int(x[1])) for x in zip(seeds[::2], seeds[1::2])])
     chunks: Deque[Chunk] = deque()
     to_process = deque()
-    # new_destinations: Deque[Chunk] = deque()
     for line in input_data[1:]:
         if "map" in line:
             # print(line)
@@ -73,7 +72,6 @@ def part_B(input_filename: str) -> int:
                     max(seed.start, src) - (src - dest),
                     min(seed.start + seed.length - 1, src + amt - 1) - max(seed.start, src) + 1,
                 )
-                # chunks.popleft()
                 new_destinations.append(inside_range)
     new_destinations += to_process
     return min(new_destinations, key=lambda x: x.start).start
