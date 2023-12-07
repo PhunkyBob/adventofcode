@@ -48,17 +48,17 @@ card_strength: Dict[str, int] = {
 
 class Hand:
     hand: str
-    strenght: HandStrength
+    strength: HandStrength
     amount: int
 
     def __init__(self, hand: str, amount: int = 0) -> None:
         self.hand = hand
         self.amount = amount
-        self.strenght = self.get_strength(hand)
+        self.strength = self.get_strength(hand)
 
     def __lt__(self, other: "Hand") -> bool:
-        if self.strenght.value != other.strenght.value:
-            return self.strenght.value < other.strenght.value
+        if self.strength.value != other.strength.value:
+            return self.strength.value < other.strength.value
         return next(
             (
                 card_strength[self.hand[i]] < card_strength[other.hand[i]]
