@@ -39,21 +39,10 @@ hand_strength: Dict[Union[Tuple, int], HandStrength] = {
     (5,): HandStrength.FIVE_OF_A_KIND,
 }
 
-card_strength: Dict[str, int] = {
-    "2": 2,
-    "3": 3,
-    "4": 4,
-    "5": 5,
-    "6": 6,
-    "7": 7,
-    "8": 8,
-    "9": 9,
-    "T": 10,
-    "J": 1,  # Weakest card
-    "Q": 12,
-    "K": 13,
-    "A": 14,
-}
+
+def get_card_strength(card: str) -> int:
+    order = "J23456789TQKA"
+    return order.find(card)
 
 
 def hand_to_strength(hand: str) -> HandStrength:
@@ -75,7 +64,7 @@ class Hand:
         if self.strenght.value != other.strenght.value:
             return self.strenght.value < other.strenght.value
         return next(
-            (card_strength[i] < card_strength[j] for i, j in zip(self.hand, other.hand) if i != j),
+            (get_card_strength(i) < get_card_strength(j) for i, j in zip(self.hand, other.hand) if i != j),
             False,
         )
 
