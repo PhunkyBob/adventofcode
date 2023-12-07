@@ -10,13 +10,11 @@ T55J5 684
 KK677 28
 KTJJT 220
 QQQJA 483
-
 """
 from collections import Counter
-from typing import List, Dict
+from typing import List, Dict, Tuple, Union
 from aoc_performance import aoc_perf
 from enum import Enum
-import re
 
 DAY = "07"
 
@@ -30,6 +28,16 @@ class HandStrength(Enum):
     FOUR_OF_A_KIND = 6
     FIVE_OF_A_KIND = 7
 
+
+hand_strength: Dict[Union[Tuple, int], HandStrength] = {
+    (1, 1, 1, 1, 1): HandStrength.HIGH_CARD,
+    (2, 1, 1, 1): HandStrength.ONE_PAIR,
+    (2, 2, 1): HandStrength.TWO_PAIRS,
+    (3, 1, 1): HandStrength.THREE_OF_A_KIND,
+    (3, 2): HandStrength.FULL_HOUSE,
+    (4, 1): HandStrength.FOUR_OF_A_KIND,
+    (5,): HandStrength.FIVE_OF_A_KIND,
+}
 
 card_strength: Dict[str, int] = {
     "2": 2,
@@ -46,6 +54,11 @@ card_strength: Dict[str, int] = {
     "K": 13,
     "A": 14,
 }
+
+
+def hand_to_strength(hand: str) -> HandStrength:
+    format = tuple(c[1] for c in Counter(hand).most_common())
+    return hand_strength[format]
 
 
 class Hand:
@@ -69,20 +82,7 @@ class Hand:
     @staticmethod
     def get_strength(hand: str) -> HandStrength:
         if "J" not in hand:
-            sorted_hand = "".join(sorted(hand))
-            if re.search(r"(.)\1{4}", sorted_hand):
-                return HandStrength.FIVE_OF_A_KIND
-            if re.search(r"(.)\1{3}", sorted_hand):
-                return HandStrength.FOUR_OF_A_KIND
-            if re.search(r"(.)\1{2}(.)\2", sorted_hand) or re.search(r"(.)\1(.)\2{2}", sorted_hand):
-                return HandStrength.FULL_HOUSE
-            if re.search(r"(.)\1{2}", sorted_hand):
-                return HandStrength.THREE_OF_A_KIND
-            if re.search(r"(.)\1.?(.)\2", sorted_hand):
-                return HandStrength.TWO_PAIRS
-            if re.search(r"(.)\1", sorted_hand):
-                return HandStrength.ONE_PAIR
-            return HandStrength.HIGH_CARD
+            return hand_to_strength(hand)
         elif not hand.replace("J", ""):
             return HandStrength.FIVE_OF_A_KIND
         else:
