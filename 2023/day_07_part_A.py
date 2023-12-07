@@ -109,6 +109,7 @@ def main() -> None:
         print(f"Day {DAY} Part A")
         answer = part_A(input_filename)
         print(f"Answer: {answer}")
+        # Expected result: 253954294
 
 
 if __name__ == "__main__":

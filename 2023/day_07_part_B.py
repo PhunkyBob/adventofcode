@@ -12,6 +12,7 @@ KTJJT 220
 QQQJA 483
 
 """
+from collections import Counter
 from typing import List, Dict
 from aoc_performance import aoc_perf
 from enum import Enum
@@ -40,7 +41,7 @@ card_strength: Dict[str, int] = {
     "8": 8,
     "9": 9,
     "T": 10,
-    "J": 1,
+    "J": 1,  # Weakest card
     "Q": 12,
     "K": 13,
     "A": 14,
@@ -85,12 +86,8 @@ class Hand:
         elif not hand.replace("J", ""):
             return HandStrength.FIVE_OF_A_KIND
         else:
-            max_strength = HandStrength.HIGH_CARD
-            for card in set(hand.replace("J", "")):
-                strenght = Hand.get_strength(hand.replace("J", card))
-                if strenght.value > max_strength.value:
-                    max_strength = strenght
-            return max_strength
+            most_frequent_card = Counter(hand.replace("J", "")).most_common(1)[0][0]
+            return Hand.get_strength(hand.replace("J", most_frequent_card))
 
 
 def read_input(input_filename: str) -> List[Hand]:
@@ -105,10 +102,6 @@ def read_input(input_filename: str) -> List[Hand]:
 def part_B(input_filename: str) -> int:
     hands = read_input(input_filename)
     hands.sort()
-    with open("sorted_wrong.txt", "w") as r:
-        for i in hands:
-            r.write(f"{i.hand}\n")
-
     return sum((rank + 1) * hands[rank].amount for rank in range(len(hands)))
 
 
@@ -120,6 +113,7 @@ def main() -> None:
         print(f"Day {DAY} Part B")
         answer = part_B(input_filename)
         print(f"Answer: {answer}")
+        # Expected result: 254837398
 
 
 if __name__ == "__main__":
