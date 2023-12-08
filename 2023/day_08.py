@@ -7,15 +7,12 @@ https://adventofcode.com/2023/day/8
 from typing import Any, Callable, List, Dict, Tuple
 from aoc_performance import aoc_perf
 import re
-from math import gcd
+from math import lcm
 
 DAY = "08"
 
 
 def lcm_of_list(numbers):
-    def lcm(x, y):
-        return x * y // gcd(x, y)
-
     result = 1
     for num in numbers:
         result = lcm(result, num)
@@ -46,6 +43,7 @@ def part_A(input_filename: str) -> int:
 
 def part_B(input_filename: str) -> int:
     directions, data = read_input(input_filename)
+
     currents = [d for d in data.keys() if d[-1] == "A"]
     steps_list = []
     for current in currents:
