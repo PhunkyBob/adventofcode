@@ -101,10 +101,10 @@ def clean_start(data: Map, starting_row: int, starting_col: int) -> Map:
     return data
 
 
-def get_steps(data: Map, starting_row: int, starting_col: int) -> List[Tuple[int, int]]:
+def get_steps(data: Map, starting_row: int, starting_col: int) -> Set[Tuple[int, int]]:
     """Returns a list of steps (row, col) to loop in the map from starting postion."""
     start_direction = next(iter(data[starting_row][starting_col].connections))
-    steps: List[Tuple[int, int]] = [(starting_row, starting_col)]
+    steps: Set[Tuple[int, int]] = {(starting_row, starting_col)}
     current_row, current_col = get_next_position(start_direction, (starting_row, starting_col))
     current_direction = start_direction
     while (current_row, current_col) != (starting_row, starting_col):
@@ -113,12 +113,12 @@ def get_steps(data: Map, starting_row: int, starting_col: int) -> List[Tuple[int
             if direction != get_opposite_direction(current_direction):
                 current_direction = direction
                 break
-        steps.append((current_row, current_col))
+        steps.add((current_row, current_col))
         current_row, current_col = get_next_position(current_direction, (current_row, current_col))
     return steps
 
 
-def count_inside(data: Map, steps: List[Tuple[int, int]]) -> int:
+def count_inside(data: Map, steps: Set[Tuple[int, int]]) -> int:
     def is_inside(row: int, col: int) -> bool:
         i = row - 1
         count_west = 0
@@ -151,7 +151,7 @@ def count_inside(data: Map, steps: List[Tuple[int, int]]) -> int:
     return total_inside
 
 
-def print_map(data: Map, steps: List[Tuple[int, int]]) -> None:
+def print_map(data: Map, steps: Set[Tuple[int, int]]) -> None:
     for row_index, row in enumerate(data):
         for col_index, pipe in enumerate(row):
             if (row_index, col_index) in steps:
