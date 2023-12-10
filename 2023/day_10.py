@@ -119,35 +119,17 @@ def get_steps(data: Map, starting_row: int, starting_col: int) -> Set[Tuple[int,
 
 
 def count_inside(data: Map, steps: Set[Tuple[int, int]]) -> int:
-    def is_inside(row: int, col: int) -> bool:
-        i = row - 1
+    """A cell is inside the loop if it has an even number of horizontal pipes above."""
+    total_inside = 0
+    for col_index in range(len(data[0])):
         count_west = 0
         count_east = 0
-        while i >= 0:
-            # if (i, col) in memory:
-            #     count_west += memory[(i, col)][0]
-            #     count_east += memory[(i, col)][1]
-            #     break
-            if memory[i][col]:
-                count_west += memory[i][col][0]
-                count_east += memory[i][col][1]
-                break
-            if (i, col) in steps:
-                count_west += 1 if Direction.WEST in data[i][col].connections else 0
-                count_east += 1 if Direction.EAST in data[i][col].connections else 0
-            i -= 1
-        memory[row][col] = (count_west, count_east)
-        return min(count_west, count_east) % 2 == 1
-
-    memory = [[None for _ in row] for row in data]
-    # memory = {}
-    total_inside = 0
-    for row_index, row in enumerate(data):
-        for col_index, pipe in enumerate(row):
-            if (row_index, col_index) not in steps and is_inside(row_index, col_index):
-                total_inside += 1
-            # print(".", end="", flush=True)
-        # print()
+        for row_index in range(len(data)):
+            if (row_index, col_index) in steps:
+                count_west += 1 if Direction.WEST in data[row_index][col_index].connections else 0
+                count_east += 1 if Direction.EAST in data[row_index][col_index].connections else 0
+            else:
+                total_inside += min(count_west, count_east) % 2 == 1
     return total_inside
 
 
