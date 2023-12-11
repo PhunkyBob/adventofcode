@@ -1,9 +1,9 @@
-from day_03 import part_A, part_B
+from day_11 import DAY, part_A, part_B
 
 
 def test_part_A():
-    assert part_A("day_03_input_sample.txt") == 4361
+    assert part_A(f"day_{DAY}_input_sample.txt") == 0
 
 
 def test_part_B():
-    assert part_B("day_03_input_sample.txt") == 0
+    assert part_B(f"day_{DAY}_input_sample.txt") == 0
