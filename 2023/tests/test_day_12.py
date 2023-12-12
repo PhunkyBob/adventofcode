@@ -3,10 +3,10 @@ from day_12 import (
     part_A,
     part_B,
     count_possible_regex,
-    unfold_all,
     count_possible_part2,
     springs_to_tuple,
     size_to_tuple,
+    unfold,
 )
 
 
@@ -20,12 +20,10 @@ def test_count_possible():
 
 
 def test_unfold():
-    assert unfold_all(".#", "1") == (".#?.#?.#?.#?.#", "1,1,1,1,1")
-    assert unfold_all("???.###", "1,1,3") == (
-        "???.###????.###????.###????.###????.###",
-        "1,1,3,1,1,3,1,1,3,1,1,3,1,1,3",
-    )
-    assert unfold_all("###", "1,1,1") == ("###?###?###?###?###", "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1")
+    assert unfold(".#", "?") == ".#?.#?.#?.#?.#"
+    assert unfold("1", ",") == "1,1,1,1,1"
+    assert unfold("???.###", "?") == "???.###????.###????.###????.###????.###"
+    assert unfold("1,1,3", ",") == "1,1,3,1,1,3,1,1,3,1,1,3,1,1,3"
 
 
 def test_count_possible_part2():

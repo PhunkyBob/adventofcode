@@ -35,7 +35,7 @@ def count_possible_regex(input: str, pattern: str) -> int:
     return 0
 
 
-def read_input(input_filename: str) -> List[Tuple[str, str]]:
+def read_input(input_filename: str) -> List[Tuple[str, ...]]:
     with open(input_filename, "r") as input_file:
         return [tuple(line.strip().split(" ")) for line in input_file]
 
@@ -47,7 +47,7 @@ def part_A(input_filename: str) -> int:
 
 
 def unfold(input: str, separator: str, times: int = 5) -> str:
-    return separator.join([input] * 5)
+    return separator.join([input] * times)
 
 
 def springs_to_tuple(sequence: str, apply_unfold: bool = False) -> Tuple[str, ...]:
