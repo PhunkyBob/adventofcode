@@ -23,6 +23,8 @@ For example:
 
 To find the reflection in each pattern, you need to find a perfect reflection across either a horizontal line between two rows or across a vertical line between two columns.
 """
+
+import itertools
 from typing import Generator, List, Tuple
 from aoc_performance import aoc_perf
 
@@ -37,15 +39,15 @@ def read_input(input_filename: str) -> List[Array]:
     return arrays
 
 
+def rotate(array: Array) -> Array:
+    """Rotate a matrix 90 degrees clockwise."""
+    return [[array[y][x] for y in range(len(array) - 1, -1, -1)] for x in range(len(array[0]))]
+
+
 def find_horizontal_symetry(array: Array, excep: int = 0) -> int:
     for index in range(len(array) - 1):
         if index + 1 == excep:
             continue
-        # width = min(index + 1, len(array) - index - 1)
-        # slice_top_reversed = array[index + 1 - width : index + 1][::-1]
-        # slice_below = array[index + 1 : index + 1 + width]
-        # if slice_top_reversed == slice_below:
-        #     return index + 1
 
         symetry = True
         rows = 0
@@ -57,12 +59,30 @@ def find_horizontal_symetry(array: Array, excep: int = 0) -> int:
     return 0
 
 
-def rotate(array: Array) -> Array:
-    return [[array[y][x] for y in range(len(array) - 1, -1, -1)] for x in range(len(array[0]))]
-
-
 def find_vertical_symetry(array: Array, excep: int = 0) -> int:
     return find_horizontal_symetry(rotate(array), excep)
+
+
+def count_differences(array1: Array, array2: Array) -> int:
+    """Count the number of differences between two matrix."""
+    return sum(array1[y][x] != array2[y][x] for y, x in itertools.product(range(len(array1)), range(len(array1[0]))))
+
+
+def find_horizontal_symetry_block(array: Array, allowed_diff: int = 0, excep: int = 0) -> int:
+    for index in range(len(array) - 1):
+        if index + 1 == excep:
+            continue
+        width = min(index + 1, len(array) - index - 1)
+        slice_top_reversed = array[index + 1 - width : index + 1][::-1]
+        slice_below = array[index + 1 : index + 1 + width]
+        if count_differences(slice_top_reversed, slice_below) <= allowed_diff:
+            return index + 1
+
+    return 0
+
+
+def find_vertical_symetry_block(array: Array, allowed_diff: int = 0, excep: int = 0) -> int:
+    return find_horizontal_symetry_block(rotate(array), allowed_diff, excep)
 
 
 def modified_array_generator(array: Array) -> Generator[Array, None, None]:
@@ -87,6 +107,21 @@ def part_A(input_filename: str) -> int:
 
 
 def part_B(input_filename: str) -> int:
+    arrays = read_input(input_filename)
+    total_left = 0
+    total_above = 0
+
+    for array in arrays:
+        original_above = find_horizontal_symetry(array)
+        original_left = find_vertical_symetry(array)
+        if symetry := find_horizontal_symetry_block(array, 1, original_above):
+            total_above += symetry
+        if symetry := find_vertical_symetry_block(array, 1, original_left):
+            total_left += symetry
+    return total_left + total_above * 100
+
+
+def part_B_old(input_filename: str) -> int:
     arrays = read_input(input_filename)
     total_left = 0
     total_above = 0
