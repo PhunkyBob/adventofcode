@@ -39,12 +39,20 @@ def read_input(input_filename: str) -> List[Array]:
 
 def find_horizontal_symetry(array: Array, excep: int = 0) -> int:
     for index in range(len(array) - 1):
+        if index + 1 == excep:
+            continue
+        # width = min(index + 1, len(array) - index - 1)
+        # slice_top_reversed = array[index + 1 - width : index + 1][::-1]
+        # slice_below = array[index + 1 : index + 1 + width]
+        # if slice_top_reversed == slice_below:
+        #     return index + 1
+
         symetry = True
         rows = 0
         while symetry and rows <= index and index + rows + 1 < len(array):
             symetry &= array[index - rows] == array[index + rows + 1]
             rows += 1
-        if symetry and index + 1 != excep:
+        if symetry:
             return index + 1
     return 0
 
