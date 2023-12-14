@@ -34,7 +34,7 @@ def read_input(input_filename: str) -> Tuple[Set[Coord], Set[Coord]]:
 
 def get_north_limit(coord: Coord, rounds: Set[Coord], cubes: Set[Coord]) -> Coord:
     index = limit_y = coord.y
-
+    # filtered_cubes = set(filter(lambda x: x.x == coord.x and x.y < coord.y, cubes))
     while index >= 0 and Coord(coord.x, index) not in cubes:
         if Coord(coord.x, index) not in rounds:
             limit_y = index
@@ -43,16 +43,16 @@ def get_north_limit(coord: Coord, rounds: Set[Coord], cubes: Set[Coord]) -> Coor
 
 
 # @lru_cache
-def tilt_north(rounds: Set[Coord], cubes: Set[Coord]) -> Set[Coord]:
+def tilt_north(rounds: Set[Coord], cubes: Dict[int, Set[Coord]]) -> Set[Coord]:
     rounds_copy = set(rounds)
-    for round in rounds_copy:
-        new_round = get_north_limit(round, rounds, cubes)
-        if round != new_round:
-            rounds.remove(round)
+    for current_round in rounds_copy:
+        new_round = get_north_limit(current_round, rounds, cubes.get(current_round.x, set()))
+        if current_round != new_round:
+            rounds.remove(current_round)
             rounds.add(new_round)
-        # print(round, new_round)
-        # display(rounds, cubes)
-        # print()
+            # print(round, new_round)
+            # display(rounds, cubes)
+            # print()
     return rounds
 
 
@@ -87,9 +87,14 @@ def rotate(coords: Set[Coord], max_x: int, max_y: int) -> Set[Coord]:
 
 def part_A(input_filename: str) -> int:
     rounds, cubes = read_input(input_filename)
+    split_cubes = {}
+    for cube in cubes:
+        if cube.x not in split_cubes:
+            split_cubes[cube.x] = []
+        split_cubes[cube.x].append(cube)
     # display(rounds, cubes)
     # print()
-    new_rounds = tilt_north(rounds, cubes)
+    new_rounds = tilt_north(rounds, split_cubes)
     # display(new_rounds, cubes)
     return get_total_load(new_rounds, cubes)
 
@@ -101,6 +106,17 @@ def part_B(input_filename: str) -> int:
     max_x = max(rounds, key=lambda coord: coord.x).x
     max_x = max(max_x, max(cubes, key=lambda coord: coord.x).x)
 
+    # Combination of cubes
+    pre_cubes = {}
+    for i in range(4):
+        split_cubes = {}
+        for cube in cubes:
+            if cube.x not in split_cubes:
+                split_cubes[cube.x] = []
+            split_cubes[cube.x].append(cube)
+        pre_cubes[i] = split_cubes
+        cubes = rotate(cubes, max_x, max_y)
+
     memory: Dict[Tuple, int] = {}
     i = 0
     steps = 1000000000
@@ -111,10 +127,10 @@ def part_B(input_filename: str) -> int:
             loop_size = i - memory[key]
             remains = (steps - i) % loop_size
             i = steps - remains
-        for _ in range(4):
-            new_rounds = tilt_north(rounds, cubes)
+        for j in range(4):
+            new_rounds = tilt_north(rounds, pre_cubes[j])
             rounds = rotate(new_rounds, max_x, max_y)
-            cubes = rotate(cubes, max_x, max_y)
+            # cubes = rotate(cubes, max_x, max_y)
         memory[key] = i
         if i % 10 == 0:
             print(f"Round {i}")
