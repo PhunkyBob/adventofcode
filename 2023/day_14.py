@@ -101,15 +101,25 @@ def part_B(input_filename: str) -> int:
     max_x = max(rounds, key=lambda coord: coord.x).x
     max_x = max(max_x, max(cubes, key=lambda coord: coord.x).x)
 
-    return 0
-    for i in range(1):
+    memory: Dict[Tuple, int] = {}
+    i = 0
+    steps = 1000000000
+    while i < steps:
+        key = tuple(rounds)
+        if key in memory:
+            print(f"Found a match: step {i} == step {memory[key]}")
+            loop_size = i - memory[key]
+            remains = (steps - i) % loop_size
+            i = steps - remains
         for _ in range(4):
             new_rounds = tilt_north(rounds, cubes)
             rounds = rotate(new_rounds, max_x, max_y)
             cubes = rotate(cubes, max_x, max_y)
+        memory[key] = i
         if i % 10 == 0:
             print(f"Round {i}")
-    display(rounds, cubes)
+        i += 1
+    # display(rounds, cubes)
 
     return get_total_load(rounds, cubes)
 
