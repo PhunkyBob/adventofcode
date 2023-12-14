@@ -1,0 +1,133 @@
+"""
+Advent of Code 2023
+
+https://adventofcode.com/2023/day/14
+
+"""
+from enum import Enum
+from functools import lru_cache
+from typing import Any, Callable, List, Dict, NamedTuple, Set, Tuple
+from aoc_performance import aoc_perf
+
+DAY = "14"
+
+
+class Coord(NamedTuple):
+    x: int
+    y: int
+
+
+class Direction(Enum):
+    NORTH = Coord(0, -1)
+    EAST = Coord(1, 0)
+    SOUTH = Coord(0, 1)
+    WEST = Coord(-1, 0)
+
+
+def read_input(input_filename: str) -> Tuple[Set[Coord], Set[Coord]]:
+    with open(input_filename, "r") as input_file:
+        lines = input_file.readlines()
+    rounds = {Coord(col, row) for row, line in enumerate(lines) for col, char in enumerate(line) if char == "O"}
+    cubes = {Coord(col, row) for row, line in enumerate(lines) for col, char in enumerate(line) if char == "#"}
+    return rounds, cubes
+
+
+def get_north_limit(coord: Coord, rounds: Set[Coord], cubes: Set[Coord]) -> Coord:
+    index = limit_y = coord.y
+
+    while index >= 0 and Coord(coord.x, index) not in cubes:
+        if Coord(coord.x, index) not in rounds:
+            limit_y = index
+        index -= 1
+    return Coord(coord.x, limit_y)
+
+
+# @lru_cache
+def tilt_north(rounds: Set[Coord], cubes: Set[Coord]) -> Set[Coord]:
+    rounds_copy = set(rounds)
+    for round in rounds_copy:
+        new_round = get_north_limit(round, rounds, cubes)
+        if round != new_round:
+            rounds.remove(round)
+            rounds.add(new_round)
+        # print(round, new_round)
+        # display(rounds, cubes)
+        # print()
+    return rounds
+
+
+def display(rounds: Set[Coord], cubes: Set[Coord]) -> None:
+    max_y = max(rounds, key=lambda coord: coord.y).y
+    max_y = max(max_y, max(cubes, key=lambda coord: coord.y).y)
+    max_x = max(rounds, key=lambda coord: coord.x).x
+    max_x = max(max_x, max(cubes, key=lambda coord: coord.x).x)
+
+    for row in range(max_y + 1):
+        for col in range(max_x + 1):
+            coord = Coord(col, row)
+            if coord in cubes:
+                print("#", end="")
+            elif coord in rounds:
+                print("O", end="")
+            else:
+                print(".", end="")
+        print()
+
+
+def get_total_load(rounds: Set[Coord], cubes: Set[Coord]) -> int:
+    max_y = max(rounds, key=lambda coord: coord.y).y
+    max_y = max(max_y, max(cubes, key=lambda coord: coord.y).y) + 1
+    return sum(max_y - coord.y for coord in rounds)
+
+
+def rotate(coords: Set[Coord], max_x: int, max_y: int) -> Set[Coord]:
+    """Rotate a matrix 90 degrees clockwise."""
+    return {Coord(max_y - coord.y, coord.x) for coord in coords}
+
+
+def part_A(input_filename: str) -> int:
+    rounds, cubes = read_input(input_filename)
+    # display(rounds, cubes)
+    # print()
+    new_rounds = tilt_north(rounds, cubes)
+    # display(new_rounds, cubes)
+    return get_total_load(new_rounds, cubes)
+
+
+def part_B(input_filename: str) -> int:
+    rounds, cubes = read_input(input_filename)
+    max_y = max(rounds, key=lambda coord: coord.y).y
+    max_y = max(max_y, max(cubes, key=lambda coord: coord.y).y)
+    max_x = max(rounds, key=lambda coord: coord.x).x
+    max_x = max(max_x, max(cubes, key=lambda coord: coord.x).x)
+
+    return 0
+    for i in range(1):
+        for _ in range(4):
+            new_rounds = tilt_north(rounds, cubes)
+            rounds = rotate(new_rounds, max_x, max_y)
+            cubes = rotate(cubes, max_x, max_y)
+        if i % 10 == 0:
+            print(f"Round {i}")
+    display(rounds, cubes)
+
+    return get_total_load(rounds, cubes)
+
+
+def main() -> None:
+    input_filename = f"day_{DAY}_input.txt"
+    # input_filename = f"day_{DAY}_input_sample.txt"
+
+    with aoc_perf(memory=True):
+        print(f"Day {DAY} Part A")
+        answer = part_A(input_filename)
+        print(f"Answer: {answer}")
+
+    with aoc_perf(memory=True):
+        print(f"Day {DAY} Part B")
+        answer = part_B(input_filename)
+        print(f"Answer: {answer}")
+
+
+if __name__ == "__main__":
+    main()
