@@ -45,11 +45,20 @@ def get_north_limit(coord: Coord, rounds: Set[Coord], cubes: Set[Coord]) -> Coor
 # @lru_cache
 def tilt_north(rounds: Set[Coord], cubes: Dict[int, Set[Coord]]) -> Set[Coord]:
     rounds_copy = set(rounds)
+    split_rounds = {}
+    for round in rounds:
+        if round.x not in split_rounds:
+            split_rounds[round.x] = []
+        split_rounds[round.x].append(round)
     for current_round in rounds_copy:
-        new_round = get_north_limit(current_round, rounds, cubes.get(current_round.x, set()))
+        new_round = get_north_limit(
+            current_round, split_rounds.get(current_round.x, set()), cubes.get(current_round.x, set())
+        )
         if current_round != new_round:
             rounds.remove(current_round)
             rounds.add(new_round)
+            split_rounds[current_round.x].remove(current_round)
+            split_rounds[current_round.x].append(new_round)
             # print(round, new_round)
             # display(rounds, cubes)
             # print()
