@@ -77,6 +77,13 @@ def count_energized(start_pos: Position, start_direction: Direction) -> int:
         if (pos, direction) in energized:
             continue
         energized.add((pos, direction))
+        # # V1 : all in one
+        # queue.extend(
+        #     get_next_test(pos, next_dir)
+        #     for next_dir in next_direction.get(grid[pos.y][pos.x], {}).get(direction, [direction])
+        # )
+
+        # # V2 : use set of mirrors to avoid checking for empty space
         # if pos not in mirrors:
         #     queue.append((Position(pos.x + direction.value[0], pos.y + direction.value[1]), direction))
         #     continue
@@ -84,44 +91,39 @@ def count_energized(start_pos: Position, start_direction: Direction) -> int:
         #     get_next_position(pos, next_dir) for next_dir in next_direction[mirrors[pos]].get(direction, [direction])
         # )
 
-        queue.extend(
-            get_next_test(pos, next_dir)
-            for next_dir in next_direction.get(grid[pos.y][pos.x], {}).get(direction, [direction])
-        )
-
-        # match mirrors.get(pos, "."):
-        #     case "/":
-        #         if direction == Direction.RIGHT:
-        #             queue.append((Position(pos.x, pos.y - 1), Direction.UP))
-        #         elif direction == Direction.LEFT:
-        #             queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
-        #         elif direction == Direction.UP:
-        #             queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
-        #         elif direction == Direction.DOWN:
-        #             queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
-        #     case "\\":
-        #         if direction == Direction.RIGHT:
-        #             queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
-        #         elif direction == Direction.LEFT:
-        #             queue.append((Position(pos.x, pos.y - 1), Direction.UP))
-        #         elif direction == Direction.UP:
-        #             queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
-        #         elif direction == Direction.DOWN:
-        #             queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
-        #     case "-":
-        #         if direction in {Direction.UP, Direction.DOWN}:
-        #             queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
-        #             queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
-        #         else:
-        #             queue.append(get_next_test(pos, direction))
-        #     case "|":
-        #         if direction in {Direction.LEFT, Direction.RIGHT}:
-        #             queue.append((Position(pos.x, pos.y - 1), Direction.UP))
-        #             queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
-        #         else:
-        #             queue.append(get_next_test(pos, direction))
-        #     case _:
-        #         queue.append(get_next_test(pos, direction))
+        # V3 : use conditions instead of dict
+        match mirrors.get(pos, "."):
+            case "/":
+                if direction == Direction.RIGHT:
+                    queue.append((Position(pos.x, pos.y - 1), Direction.UP))
+                elif direction == Direction.LEFT:
+                    queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
+                elif direction == Direction.UP:
+                    queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
+                elif direction == Direction.DOWN:
+                    queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
+                continue
+            case "\\":
+                if direction == Direction.RIGHT:
+                    queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
+                elif direction == Direction.LEFT:
+                    queue.append((Position(pos.x, pos.y - 1), Direction.UP))
+                elif direction == Direction.UP:
+                    queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
+                elif direction == Direction.DOWN:
+                    queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
+                continue
+            case "-":
+                if direction in {Direction.UP, Direction.DOWN}:
+                    queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
+                    queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
+                    continue
+            case "|":
+                if direction in {Direction.LEFT, Direction.RIGHT}:
+                    queue.append((Position(pos.x, pos.y - 1), Direction.UP))
+                    queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
+                    continue
+        queue.append(get_next_test(pos, direction))
 
     # display_grid({pos[0] for pos in energized})
     return len({pos[0] for pos in energized})
