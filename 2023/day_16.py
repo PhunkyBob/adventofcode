@@ -89,6 +89,40 @@ def count_energized(start_pos: Position, start_direction: Direction) -> int:
             for next_dir in next_direction.get(grid[pos.y][pos.x], {}).get(direction, [direction])
         )
 
+        # match mirrors.get(pos, "."):
+        #     case "/":
+        #         if direction == Direction.RIGHT:
+        #             queue.append((Position(pos.x, pos.y - 1), Direction.UP))
+        #         elif direction == Direction.LEFT:
+        #             queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
+        #         elif direction == Direction.UP:
+        #             queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
+        #         elif direction == Direction.DOWN:
+        #             queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
+        #     case "\\":
+        #         if direction == Direction.RIGHT:
+        #             queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
+        #         elif direction == Direction.LEFT:
+        #             queue.append((Position(pos.x, pos.y - 1), Direction.UP))
+        #         elif direction == Direction.UP:
+        #             queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
+        #         elif direction == Direction.DOWN:
+        #             queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
+        #     case "-":
+        #         if direction in {Direction.UP, Direction.DOWN}:
+        #             queue.append((Position(pos.x - 1, pos.y), Direction.LEFT))
+        #             queue.append((Position(pos.x + 1, pos.y), Direction.RIGHT))
+        #         else:
+        #             queue.append(get_next_test(pos, direction))
+        #     case "|":
+        #         if direction in {Direction.LEFT, Direction.RIGHT}:
+        #             queue.append((Position(pos.x, pos.y - 1), Direction.UP))
+        #             queue.append((Position(pos.x, pos.y + 1), Direction.DOWN))
+        #         else:
+        #             queue.append(get_next_test(pos, direction))
+        #     case _:
+        #         queue.append(get_next_test(pos, direction))
+
     # display_grid({pos[0] for pos in energized})
     return len({pos[0] for pos in energized})
 
