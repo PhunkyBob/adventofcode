@@ -2,7 +2,23 @@
 
 ## Partie 1
 
-## Chargement des données
+### Objectif
+
+Trouver combien il y a de cases comprises dans un dessin : 
+```
+#######
+#.....#
+###...#
+..#...#
+..#...#
+###.###
+#...#..
+##..###
+.#....#
+.######
+```
+
+### Chargement des données
 
 - Pour chaque coordonées / longueur, je rajoute dans un `set` toutes les cases de la tranchée.
 
@@ -16,13 +32,17 @@ Ca aurait été bien plus efficace d'utiliser la même méthode que la Partie 2,
 
 ## Partie 2
 
+### Objectif
+
+Pareil qu'avant, mais avec des longeurs de tranchées bien plus grandes.
+
 Il n'est plus possibles de charger les données comme pour la Partie 1 et encore moins de calculer la surface. 
 
-## Chargement des données
+### Chargement des données
 
 - Je stocke dans un `set` la liste de tous les points de la forme géométrique. 
 
-## Calcul de la surface
+### Calcul de la surface
 
 La [Shoelace Formula](https://en.wikipedia.org/wiki/Shoelace_formula) est un algorithme mathématique pour déterminer l'aire d'un polygone simple dont les sommets sont décrits par leurs coordonnées cartésiennes dans le plan. 
 
