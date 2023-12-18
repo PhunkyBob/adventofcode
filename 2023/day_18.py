@@ -1,7 +1,24 @@
 """
 Advent of Code 2023
-
+--- Day 18: Lavaduct Lagoon ---
 https://adventofcode.com/2023/day/18
+
+However, they aren't sure the lagoon will be big enough; they've asked you to take a look at the dig plan (your puzzle input). For example:
+
+R 6 (#70c710)
+D 5 (#0dc571)
+L 2 (#5713f0)
+D 2 (#d2c081)
+R 2 (#59c680)
+D 2 (#411b91)
+L 5 (#8ceee2)
+U 2 (#caa173)
+L 1 (#1b58a2)
+U 2 (#caa171)
+R 2 (#7807d2)
+U 3 (#a77fa3)
+L 2 (#015232)
+U 2 (#7a21e3)
 
 """
 
@@ -123,18 +140,22 @@ def shoelace(points: List[Coord]) -> int:
     )
 
 
-def perimeter(points: List[Coord]) -> int:
-    return sum(
-        abs(points[i][0] - points[(i + 1) % len(points)][0]) + abs(points[i][1] - points[(i + 1) % len(points)][1])
-        for i in range(len(points))
+def picks_theorem(points: List[Coord]) -> int:
+    return (
+        sum(
+            abs(points[i][0] - points[(i + 1) % len(points)][0]) + abs(points[i][1] - points[(i + 1) % len(points)][1])
+            for i in range(len(points))
+        )
+        // 2
+        + 1
     )
 
 
 def part_B(input_filename: str) -> int:
     points = read_input2(input_filename)
     surface = shoelace(points)
-    p = perimeter(points)
-    return surface + p // 2 + 1
+    picks = picks_theorem(points)
+    return surface + picks
 
 
 def main() -> None:
@@ -151,6 +172,7 @@ def main() -> None:
         print(f"Day {DAY} Part B")
         answer = part_B(input_filename)
         print(f"Answer: {answer}")
+        # Expected: 131265059885080
 
 
 if __name__ == "__main__":
