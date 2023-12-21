@@ -39,12 +39,14 @@ def calc_min_distances(
         current = to_visit.pop(0)
         for direction in directions.values():
             next_pos = (current[0] + direction[0], current[1] + direction[1])
+            mod_x = next_pos[0] % bounds[1][0]
+            mod_y = next_pos[1] % bounds[1][1]
             if (
-                next_pos not in rocks
+                (mod_x, mod_y) not in rocks
                 and next_pos not in min_distances
                 and min_distances[current] + 1 <= max_distance
-                and bounds[0][0] <= next_pos[0] <= bounds[1][0]
-                and bounds[0][1] <= next_pos[1] <= bounds[1][1]
+                # and bounds[0][0] <= next_pos[0] <= bounds[1][0]
+                # and bounds[0][1] <= next_pos[1] <= bounds[1][1]
             ):
                 min_distances[next_pos] = min_distances[current] + 1
                 to_visit.append(next_pos)
@@ -60,9 +62,32 @@ def count_reachable(min_distances: Dict[Cell, int], start: Cell, max_distance: i
     return reachable
 
 
+def display(rocks: List[Cell], start: Cell, bounds: Tuple[Cell, Cell], min_distances: Dict[Cell, int]) -> None:
+    min_x, min_y = min(x for x, y in min_distances), min(y for x, y in min_distances)
+    max_x, max_y = max(x for x, y in min_distances), max(y for x, y in min_distances)
+    output = ""
+    for y in range(min_y, max_y + 1):
+        for x in range(min_x, max_x + 1):
+            mod_x = x % bounds[1][0]
+            mod_y = y % bounds[1][1]
+            if (x, y) == start:
+                output += "S"
+            elif (mod_x, mod_y) in rocks:
+                output += "#"
+            elif (x, y) in min_distances:
+                output += "O"
+            else:
+                output += "."
+        output += "\n"
+    with open("output.txt", "w") as output_file:
+        output_file.write(output)
+
+
 def part_A(input_filename: str, distance: int = 64) -> int:
+    # distance = 128
     rocks, start, bounds = read_input(input_filename)
     min_distances = calc_min_distances(rocks, start, bounds, distance)
+    # display(rocks, start, bounds, min_distances)
     return count_reachable(min_distances, start, distance)
 
 
@@ -78,6 +103,7 @@ def main() -> None:
         print(f"Day {DAY} Part A")
         answer = part_A(input_filename)
         print(f"Answer: {answer}")
+        # Expected answer: 3637
 
     with aoc_perf(memory=True):
         print(f"Day {DAY} Part B")
