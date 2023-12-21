@@ -56,7 +56,9 @@ def find_shortest_path(
 ) -> int:
     if end is None:
         end = (len(matrix[0]) - 1, len(matrix) - 1)
-    candidates: List[Tuple[int, Element]] = [(0, (start, dir, 1)) for dir in [UP, RIGHT, DOWN, LEFT]]
+    candidates: List[Tuple[int, Element]] = []
+    for dir in [UP, RIGHT, DOWN, LEFT]:
+        heapq.heappush(candidates, (0, (start, dir, 1)))
     certains = set()
     iter = 0
     while candidates:
