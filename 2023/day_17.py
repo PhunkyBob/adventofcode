@@ -97,13 +97,13 @@ def main() -> None:
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 
-    with aoc_perf(memory=True):
+    with aoc_perf(memory=False):
         print(f"Day {DAY} Part A")
         answer = part_A(input_filename)
         print(f"Answer: {answer}")
         # Expected: 855
 
-    with aoc_perf(memory=True):
+    with aoc_perf(memory=False):
         print(f"Day {DAY} Part B")
         answer = part_B(input_filename)
         print(f"Answer: {answer}")
