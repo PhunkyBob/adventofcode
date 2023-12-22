@@ -8,9 +8,8 @@ https://adventofcode.com/2023/day/22
 import heapq
 import itertools
 import re
-from typing import Any, Callable, List, Dict, Set, Tuple
+from typing import Dict, Set, Tuple
 from aoc_performance import aoc_perf
-import numpy as np
 
 DAY = "22"
 
@@ -46,16 +45,16 @@ def continue_fall(blocks: Blocks) -> Blocks:
     x_max = max(max(elem[0] for elem in blocks[block]) for block in blocks)
     y_max = max(max(elem[1] for elem in blocks[block]) for block in blocks)
 
-    up_view = np.zeros((x_max + 1, y_max + 1), dtype=int)
+    # For each block, find the actual max z
+    up_view = [[0 for _ in range(x_max + 1)] for _ in range(y_max + 1)]
     for block in sorted_blocks:
-        actual_max_z = int(max(up_view[x, y] for x, y, z in blocks[block]))
-        block_bottom = min(z for x, y, z in blocks[block])
-        block_height = max(z for x, y, z in blocks[block]) - block_bottom + 1
+        actual_max_z = int(max(up_view[x][y] for x, y, z in blocks[block]))
+        block_bottom = min(z for _, _, z in blocks[block])
         distance_to_fall = block_bottom - actual_max_z - 1
         new_blocks[block] = tuple((x, y, z - distance_to_fall) for x, y, z in blocks[block])
-        new_block_top = max(z for x, y, z in new_blocks[block])
-        for x, y, z in new_blocks[block]:
-            up_view[x, y] = new_block_top
+        new_block_top = max(z for _, _, z in new_blocks[block])
+        for x, y, _ in new_blocks[block]:
+            up_view[x][y] = new_block_top
 
     return new_blocks
 
@@ -126,6 +125,7 @@ def main() -> None:
         print(f"Day {DAY} Part B")
         answer = part_B(input_filename)
         print(f"Answer: {answer}")
+        # Expected answer : 67468
 
 
 if __name__ == "__main__":
