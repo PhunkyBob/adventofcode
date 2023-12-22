@@ -63,21 +63,19 @@ def part_A(input_filename: str) -> int:
     blocks = read_input(input_filename)
     new_blocks = continue_fall(blocks)
     distinct_blocks = set(blocks.values())
-    belows: Dict[int, Set[int]] = {}  # block -> [blocks above]
+    belows: Dict[int, Set[int]] = {}  # block -> [blocks below]
+
+    unit_blocks = {b: key for key, blocks in new_blocks.items() for b in blocks}
     with aoc_perf(memory=True):
-        for block_1, block_2 in itertools.permutations(new_blocks.keys(), 2):
-            if block_1 == block_2:
-                continue
-            bottom_1 = min(z for x, y, z in new_blocks[block_1])
-            top_2 = max(z for x, y, z in new_blocks[block_2])
-            if bottom_1 != top_2 + 1:
-                continue
-            for x, y, z in new_blocks[block_1]:
-                if (x, y, z - 1) in new_blocks[block_2]:
-                    if block_1 not in belows:
-                        belows[block_1] = set()
-                    belows[block_1].add(block_2)
-                    break
+        for a_coord, a_block in unit_blocks.items():
+            if (a_coord[0], a_coord[1], a_coord[2] - 1) in unit_blocks:
+                b_block = unit_blocks[(a_coord[0], a_coord[1], a_coord[2] - 1)]
+                if b_block == a_block:
+                    continue
+                if a_block not in belows:
+                    belows[a_block] = set()
+                belows[a_block].add(b_block)
+
     are_only_support = set().union(*[val for val in belows.values() if len(val) == 1])
     return len(distinct_blocks) - len(are_only_support)
 
@@ -94,6 +92,7 @@ def main() -> None:
         print(f"Day {DAY} Part A")
         answer = part_A(input_filename)
         print(f"Answer: {answer}")
+        # Expected answer : 497
 
     with aoc_perf(memory=True):
         print(f"Day {DAY} Part B")
