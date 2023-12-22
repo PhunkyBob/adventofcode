@@ -46,7 +46,7 @@ def continue_fall(blocks: Blocks) -> Blocks:
     y_max = max(max(elem[1] for elem in blocks[block]) for block in blocks)
 
     # For each block, find the actual max z
-    up_view = [[0 for _ in range(x_max + 1)] for _ in range(y_max + 1)]
+    up_view = [[0 for _ in range(y_max + 1)] for _ in range(x_max + 1)]
     for block in sorted_blocks:
         actual_max_z = int(max(up_view[x][y] for x, y, z in blocks[block]))
         block_bottom = min(z for _, _, z in blocks[block])
