@@ -5,6 +5,7 @@ https://adventofcode.com/2023/day/22
 
 """
 
+import heapq
 import itertools
 import re
 from typing import Any, Callable, List, Dict, Set, Tuple
@@ -59,29 +60,56 @@ def continue_fall(blocks: Blocks) -> Blocks:
     return new_blocks
 
 
+def get_above_belows(new_blocks: Blocks) -> Tuple[Dict[int, Set[int]], Dict[int, Set[int]]]:
+    belows: Dict[int, Set[int]] = {}  # block -> [blocks below]
+    aboves: Dict[int, Set[int]] = {}  # block -> [blocks above]
+    unit_blocks = {b: key for key, blocks in new_blocks.items() for b in blocks}
+    for a_coord, a_block in unit_blocks.items():
+        if (a_coord[0], a_coord[1], a_coord[2] - 1) in unit_blocks:
+            b_block = unit_blocks[(a_coord[0], a_coord[1], a_coord[2] - 1)]
+            if b_block == a_block:
+                continue
+            if a_block not in belows:
+                belows[a_block] = set()
+            belows[a_block].add(b_block)
+            if b_block not in aboves:
+                aboves[b_block] = set()
+            aboves[b_block].add(a_block)
+    return aboves, belows
+
+
 def part_A(input_filename: str) -> int:
     blocks = read_input(input_filename)
     new_blocks = continue_fall(blocks)
-    distinct_blocks = set(blocks.values())
-    belows: Dict[int, Set[int]] = {}  # block -> [blocks below]
-
-    unit_blocks = {b: key for key, blocks in new_blocks.items() for b in blocks}
-    with aoc_perf(memory=True):
-        for a_coord, a_block in unit_blocks.items():
-            if (a_coord[0], a_coord[1], a_coord[2] - 1) in unit_blocks:
-                b_block = unit_blocks[(a_coord[0], a_coord[1], a_coord[2] - 1)]
-                if b_block == a_block:
-                    continue
-                if a_block not in belows:
-                    belows[a_block] = set()
-                belows[a_block].add(b_block)
-
+    _, belows = get_above_belows(new_blocks)
     are_only_support = set().union(*[val for val in belows.values() if len(val) == 1])
-    return len(distinct_blocks) - len(are_only_support)
+    return len(blocks) - len(are_only_support)
+
+
+def count_falling(block_id: int, aboves, belows) -> int:
+    heapq.heapify(queue := [block_id])
+    count = 0
+    already_removed: Set[int] = set()
+    while queue:
+        if (block := heapq.heappop(queue)) in already_removed:
+            continue
+        already_removed.add(block)
+        if block not in aboves:
+            continue
+        for block in aboves[block]:
+            if belows[block] - already_removed == set():
+                heapq.heappush(queue, block)
+                count += 1
+    return count
 
 
 def part_B(input_filename: str) -> int:
-    return 0
+    blocks = read_input(input_filename)
+    new_blocks = continue_fall(blocks)
+    aboves, belows = get_above_belows(new_blocks)
+    are_only_support = set().union(*[val for val in belows.values() if len(val) == 1])
+
+    return sum(count_falling(support, aboves, belows) for support in are_only_support)
 
 
 def main() -> None:

@@ -6,4 +6,4 @@ def test_part_A():
 
 
 def test_part_B():
-    assert part_B(f"day_{DAY}_input_sample.txt") == 0
+    assert part_B(f"day_{DAY}_input_sample.txt") == 7
