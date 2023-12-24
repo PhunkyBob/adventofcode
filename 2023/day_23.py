@@ -107,22 +107,29 @@ def merge_edges(edges: EdgesDict, start: Coord) -> EdgesDict:
     On remplace les edges qui font une ligne simple par 1 seul edge avec un poids cumulé.
     """
     # WIP
-    return
     new_edges: EdgesDict = {}
     queue: List[Tuple[Coord, Coord]] = [(start, start)]
     heapq.heapify(queue)
+    visited = set()
     while queue:
         node, from_node = heapq.heappop(queue)
-        new_edges[from_node] = {}
+        if node in visited:
+            continue
+        visited.add(node)
+        if from_node not in new_edges:
+            new_edges[from_node] = {}
         current_node = node
-        distance = 0
-        edges_without_current_node = [edge for edge in edges[current_node] if edge != node]
+        distance = 0 if from_node == node else 1
+        edges_without_current_node = [edge for edge in edges[current_node] if edge not in [node, from_node]]
         while len(edges_without_current_node) == 1:
             distance += 1
             previous_node = current_node
             current_node = edges_without_current_node[0]
             edges_without_current_node = [edge for edge in edges[current_node] if edge != previous_node]
         new_edges[from_node][current_node] = distance
+        if current_node not in new_edges:
+            new_edges[current_node] = {}
+        new_edges[current_node][from_node] = distance
         for edge in edges_without_current_node:
             heapq.heappush(queue, (edge, current_node))
     return new_edges
@@ -137,7 +144,7 @@ def part_B(input_filename: str) -> int:
 
 def main() -> None:
     input_filename = f"day_{DAY}_input.txt"
-    input_filename = f"day_{DAY}_input_sample.txt"
+    # input_filename = f"day_{DAY}_input_sample.txt"
 
     with aoc_perf(memory=False):
         print(f"Day {DAY} Part A")
