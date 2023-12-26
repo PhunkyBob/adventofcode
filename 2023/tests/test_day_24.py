@@ -1,4 +1,5 @@
-from day_24 import DAY, part_A, part_B
+from day_24_part_A import DAY, part_A
+from day_24_part_B import part_B
 
 
 def test_part_A():
