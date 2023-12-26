@@ -1,5 +1,27 @@
 # Advent of Code 2023
 
+
+## Day 24 - Part A
+
+### Problème
+
+Trouver l'intersection de 2 droites dans un plan 2D.
+
+## Solution 
+
+Transformer en équation paramétrique de droite.
+
+## Day 24 - Part B
+
+### Problème
+
+Trouver la droite qui est l'intersection de plusieurs droites dans un espace en 3D.
+
+### Solution
+
+Résoudre l'ensemble des équations.
+On peut utiliser la librairie [Z3](https://github.com/Z3Prover/z3) qui prend en entrée une liste d'équations et qui donne en résultat les valeurs possibles.
+
 ## Day 25
 
 ### Problème
