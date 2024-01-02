@@ -68,16 +68,24 @@ def find_shortest_path(
         iteration += 1
         if iteration % 100_000 == 0:
             print(f"Iteration {iteration}")
+        if iteration % 25 == 0:
+            pygame.display.update()
+
         cost, current = heapq.heappop(candidates)
         if current in certains:
             continue
         certains.add(current)
+
+        coord = current[0]
+        pygame.draw.rect(WIN, COLOR_RED, (coord[0] * FONT_SIZE, coord[1] * FONT_SIZE, FONT_SIZE, FONT_SIZE))
+
         new_coord = (current[0][0] + current[1][0], current[0][1] + current[1][1])
         if new_coord[0] < 0 or new_coord[0] >= len(matrix[0]) or new_coord[1] < 0 or new_coord[1] >= len(matrix):
             continue
         new_cost = cost + matrix[new_coord[1]][new_coord[0]]
         if min_direction_count <= current[2] <= max_direction_count and new_coord == end:
-            yield None, None
+            pygame.display.update()
+            return new_cost
         for new_direction in [UP, RIGHT, DOWN, LEFT]:
             if new_direction[0] == 0 - current[1][0] and new_direction[1] == 0 - current[1][1]:
                 continue
@@ -88,8 +96,11 @@ def find_shortest_path(
                 continue
             if (new_coord, new_direction, new_direction_count) not in certains:
                 heapq.heappush(candidates, (new_cost, (new_coord, new_direction, new_direction_count)))
-        yield candidates, certains
-    return None, None
+                pygame.draw.rect(
+                    WIN, COLOR_YELLOW, (new_coord[0] * FONT_SIZE, new_coord[1] * FONT_SIZE, FONT_SIZE, FONT_SIZE)
+                )
+        # pygame.display.update()
+    return -1
 
 
 def init_window(matrix: List[List[int]]) -> None:
@@ -133,9 +144,9 @@ def draw_certains(certains: Set[Element]):
 
 
 def draw_window(matrix: List[List[int]], candidates: List[Tuple[int, Element]], certains: Set[Element]):
-    draw_candidates(candidates)
-    draw_certains(certains)
-    fps_counter()
+    # draw_candidates(candidates)
+    # draw_certains(certains)
+    # fps_counter()
     pygame.display.update()
 
 
@@ -145,19 +156,15 @@ def main():
     matrix = read_input(input_filename)
     init_window(matrix)
 
-    gen = find_shortest_path(matrix)
+    find_shortest_path(matrix)
+    # find_shortest_path(matrix, max_direction_count=10, min_direction_count=4)
+
     run = True
     while run:
-        # CLOCK.tick(FPS)
+        CLOCK.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        candidates, certains = next(gen)
-        if candidates is None or certains is None:
-            run = False
-        else:
-            draw_window(matrix, candidates, certains)
-    pygame.quit()
 
 
 if __name__ == "__main__":
