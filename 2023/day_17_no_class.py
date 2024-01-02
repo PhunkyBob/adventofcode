@@ -83,7 +83,8 @@ def find_shortest_path(
                 current[1] != new_direction and current[2] < min_direction_count
             ):
                 continue
-            heapq.heappush(candidates, (new_cost, (new_coord, new_direction, new_direction_count)))
+            if (new_coord, new_direction, new_direction_count) not in certains:
+                heapq.heappush(candidates, (new_cost, (new_coord, new_direction, new_direction_count)))
     return -1
 
 
