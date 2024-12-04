@@ -54,12 +54,9 @@ def count_xmas_from(matrix: List[List[str]], start_x: int, start_y: int) -> int:
 
 def part_A(input_filename: str) -> int:
     matrix = read_input(input_filename)
-    xmas_count = 0
-    for y in range(len(matrix)):
-        for x in range(len(matrix[y])):
-            if matrix[y][x] == "X":
-                xmas_count += count_xmas_from(matrix, x, y)
-    return xmas_count
+    return sum(
+        count_xmas_from(matrix, x, y) for y in range(len(matrix)) for x in range(len(matrix[y])) if matrix[y][x] == "X"
+    )
 
 
 def count_mas_in_x_from(matrix: List[List[str]], start_x: int, start_y: int) -> int:
@@ -82,16 +79,16 @@ def count_mas_in_x_from(matrix: List[List[str]], start_x: int, start_y: int) -> 
 
 def part_B(input_filename: str) -> int:
     matrix = read_input(input_filename)
-    xmas_count = 0
-    for y in range(1, len(matrix) - 1):
-        for x in range(1, len(matrix[y]) - 1):
-            if matrix[y][x] == "A":
-                xmas_count += count_mas_in_x_from(matrix, x, y)
-    return xmas_count
+    return sum(
+        count_mas_in_x_from(matrix, x, y)
+        for y in range(1, len(matrix) - 1)
+        for x in range(1, len(matrix[y]) - 1)
+        if matrix[y][x] == "A"
+    )
 
 
 def main() -> None:
-    input_filename = f"day_{DAY}_input_sample.txt"
+    # input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=True):
