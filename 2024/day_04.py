@@ -33,27 +33,29 @@ def is_out_of_bounds(matrix: List[List[str]], x: int, y: int) -> bool:
 
 
 def count_xmas_from(matrix: List[List[str]], start_x: int, start_y: int) -> int:
+    if matrix[start_y][start_x] != "X":
+        return 0
+
     xmas_count = 0
-    for direction in DIRECTIONS.values():
-        x = start_x
-        y = start_y
-        if matrix[y][x] != "X":
-            continue
-        x += direction[0]
-        y += direction[1]
-        if not is_out_of_bounds(matrix, x, y) and matrix[y][x] == "M":
-            x += direction[0]
-            y += direction[1]
-            if not is_out_of_bounds(matrix, x, y) and matrix[y][x] == "A":
-                x += direction[0]
-                y += direction[1]
-                if not is_out_of_bounds(matrix, x, y) and matrix[y][x] == "S":
-                    xmas_count += 1
+    expected = ["M", "A", "S"]
+
+    for dx, dy in DIRECTIONS.values():
+        x, y = start_x, start_y
+        for char in expected:
+            x += dx
+            y += dy
+            if is_out_of_bounds(matrix, x, y) or matrix[y][x] != char:
+                break
+        else:
+            xmas_count += 1
+
     return xmas_count
 
 
 def count_mas_in_x_from(matrix: List[List[str]], start_x: int, start_y: int) -> int:
     xmas_count = 0
+    if is_out_of_bounds(matrix, start_x, start_y):
+        return 0
     x = start_x
     y = start_y
     if matrix[y][x] != "A":
