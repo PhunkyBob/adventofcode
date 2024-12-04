@@ -1,8 +1,15 @@
 """
 Advent of Code 2024
-
+--- Day 4: Ceres Search ---
 https://adventofcode.com/2024/day/4
 
+..X...
+.SAMX.
+.A..A.
+XMAS.S
+.X....
+
+Count XMAS in the matrix.
 """
 
 from typing import Any, Callable, Dict, List
