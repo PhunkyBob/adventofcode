@@ -25,7 +25,7 @@ DIRECTIONS = {
 
 def read_input(input_filename: str) -> List[List[str]]:
     with open(input_filename, "r") as file:
-        return [list(line.strip()) for line in file.readlines()]
+        return [list(line.strip()) for line in file]
 
 
 def is_out_of_bounds(matrix: List[List[str]], x: int, y: int) -> bool:
@@ -52,6 +52,16 @@ def count_xmas_from(matrix: List[List[str]], start_x: int, start_y: int) -> int:
     return xmas_count
 
 
+def part_A(input_filename: str) -> int:
+    matrix = read_input(input_filename)
+    xmas_count = 0
+    for y in range(len(matrix)):
+        for x in range(len(matrix[y])):
+            if matrix[y][x] == "X":
+                xmas_count += count_xmas_from(matrix, x, y)
+    return xmas_count
+
+
 def count_mas_in_x_from(matrix: List[List[str]], start_x: int, start_y: int) -> int:
     xmas_count = 0
     if is_out_of_bounds(matrix, start_x, start_y):
@@ -61,22 +71,12 @@ def count_mas_in_x_from(matrix: List[List[str]], start_x: int, start_y: int) -> 
     if matrix[y][x] != "A":
         return 0
 
-    diagonal_up_word = f"{matrix[y - 1][x - 1]}A{matrix[y + 1][x + 1]}"
-    if diagonal_up_word in ["MAS", "SAM"]:
-        diagonal_down_word = f"{matrix[y + 1][x - 1]}A{matrix[y - 1][x + 1]}"
-        if diagonal_down_word in ["MAS", "SAM"]:
+    diagonal_words_accepted = {("M", "A", "S"), ("S", "A", "M")}
+    diagonal_up_word = (matrix[y - 1][x - 1], "A", matrix[y + 1][x + 1])
+    if diagonal_up_word in diagonal_words_accepted:
+        diagonal_down_word = (matrix[y + 1][x - 1], "A", matrix[y - 1][x + 1])
+        if diagonal_down_word in diagonal_words_accepted:
             xmas_count += 1
-
-    return xmas_count
-
-
-def part_A(input_filename: str) -> int:
-    matrix = read_input(input_filename)
-    xmas_count = 0
-    for y in range(len(matrix)):
-        for x in range(len(matrix[y])):
-            if matrix[y][x] == "X":
-                xmas_count += count_xmas_from(matrix, x, y)
     return xmas_count
 
 
