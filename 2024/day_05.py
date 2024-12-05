@@ -12,7 +12,7 @@ import functools
 
 DAY = "05"
 
-Ancestors = Dict[int, List[int]]
+Ancestors = Dict[int, Tuple[int, ...]]
 Update = List[int]
 
 
@@ -22,13 +22,18 @@ def read_input(input_filename: str):
         return process_rules(rules_txt), process_updates(updates_txt)
 
 
+def add_ancestor(ancestors: Ancestors, key: int, ancestor: int) -> Ancestors:
+    ancestors[key] = ancestors[key] + (ancestor,) if key in ancestors else (ancestor,)
+    return ancestors
+
+
 def process_rules(rules_txt: str) -> Tuple[Ancestors, Ancestors]:
     successors: Ancestors = {}
     predecessors: Ancestors = {}
     for line in rules_txt.split("\n"):
         before, after = map(int, line.split("|"))
-        successors[before] = successors.get(before, []) + [after]
-        predecessors[after] = predecessors.get(after, []) + [before]
+        successors = add_ancestor(successors, before, after)
+        predecessors = add_ancestor(predecessors, after, before)
 
     return successors, predecessors
 
@@ -37,17 +42,16 @@ def process_updates(updates_txt: str) -> List[Update]:
     return [list(map(int, line.split(","))) for line in updates_txt.split("\n")]
 
 
-# @functools.lru_cache
 def page_comparison(a: int, b: int, successors: Ancestors, predecessors: Ancestors) -> int:
-    if b in successors.get(a, []) or a in predecessors.get(b, []):
+    if b in successors.get(a, {}) or a in predecessors.get(b, {}):
         return -1
-    if a in successors.get(b, []) or b in predecessors.get(a, []):
+    if a in successors.get(b, {}) or b in predecessors.get(a, {}):
         return 1
     return 0
 
 
 def reorder_update(update: Update, successors: Ancestors, predecessors: Ancestors) -> Update:
-    # comparison_function = functools.partial(update_comparison, successors=successors, predecessors=predecessors)
+    # comparison_function = functools.partial(page_comparison, successors=successors, predecessors=predecessors)
     # return sorted(update, key=functools.cmp_to_key(comparison_function))
     return sorted(update, key=functools.cmp_to_key(lambda a, b: page_comparison(a, b, successors, predecessors)))
 
