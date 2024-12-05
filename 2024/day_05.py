@@ -5,7 +5,7 @@ https://adventofcode.com/2024/day/5
 
 """
 
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 from aoc_performance import aoc_perf
 

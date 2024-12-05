@@ -12,7 +12,7 @@ XMAS.S
 Count XMAS in the matrix.
 """
 
-from typing import Any, Callable, Dict, List
+from typing import List
 
 from aoc_performance import aoc_perf
 
