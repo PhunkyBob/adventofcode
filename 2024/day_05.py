@@ -57,9 +57,7 @@ def reorder_update(update: Update, successors: Ancestors, predecessors: Ancestor
 
 
 def is_sorted(update: Update, successors: Ancestors, predecessors: Ancestors) -> bool:
-    return update == sorted(
-        update, key=functools.cmp_to_key(lambda a, b: page_comparison(a, b, successors, predecessors))
-    )
+    return update == reorder_update(update, successors, predecessors)
 
 
 def get_middle_element(update: Update) -> int:
