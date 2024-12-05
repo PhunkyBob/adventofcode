@@ -73,9 +73,10 @@ def part_A(input_filename: str) -> int:
 
 def part_B(input_filename: str) -> int:
     (successors, predecessors), updates = read_input(input_filename)
-    incorrectly_ordered_updates = [update for update in updates if not is_sorted(update, successors, predecessors)]
     return sum(
-        get_middle_element(reorder_update(update, successors, predecessors)) for update in incorrectly_ordered_updates
+        get_middle_element(reorder_update(update, successors, predecessors))
+        for update in updates
+        if not is_sorted(update, successors, predecessors)
     )
 
 
