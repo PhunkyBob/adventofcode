@@ -58,7 +58,22 @@ def part_A(input_filename: str) -> int:
 
 
 def reorder_update(update: Update, successors: Ancestors, predecessors: Ancestors) -> Update:
-    return []
+    for pos in range(len(update) - 1):
+        all_before = update[:pos]
+        all_after = update[pos + 1 :]
+        current = update[pos]
+        for before in predecessors.get(current, []):
+            if before in all_after:
+                incorrect_index = update.index(before)
+                update.insert(pos, update.pop(incorrect_index))
+                return reorder_update(update, successors, predecessors)
+        for after in successors.get(current, []):
+            if after in all_before:
+                incorrect_index = all_before.index(after)
+                update.insert(incorrect_index + 1, update.pop(pos))
+                return reorder_update(update, successors, predecessors)
+
+    return update
 
 
 def part_B(input_filename: str) -> int:
