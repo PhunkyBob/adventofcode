@@ -8,11 +8,18 @@ https://adventofcode.com/2024/day/5
 from typing import Dict, List, Tuple
 
 from aoc_performance import aoc_perf
+import functools
 
 DAY = "05"
 
 Ancestors = Dict[int, List[int]]
 Update = List[int]
+
+
+def read_input(input_filename: str):
+    with open(input_filename, "r") as file:
+        rules_txt, updates_txt = file.read().split("\n\n")
+        return process_rules(rules_txt), process_updates(updates_txt)
 
 
 def process_rules(rules_txt: str) -> Tuple[Ancestors, Ancestors]:
@@ -30,22 +37,25 @@ def process_updates(updates_txt: str) -> List[Update]:
     return [list(map(int, line.split(","))) for line in updates_txt.split("\n")]
 
 
-def read_input(input_filename: str):
-    with open(input_filename, "r") as file:
-        rules_txt, updates_txt = file.read().split("\n\n")
-        return process_rules(rules_txt), process_updates(updates_txt)
+# @functools.lru_cache
+def page_comparison(a: int, b: int, successors: Ancestors, predecessors: Ancestors) -> int:
+    if b in successors.get(a, []) or a in predecessors.get(b, []):
+        return -1
+    if a in successors.get(b, []) or b in predecessors.get(a, []):
+        return 1
+    return 0
 
 
-def is_update_ok(update: Update, successors: Ancestors, predecessors: Ancestors) -> bool:
-    for pos in range(len(update) - 1):
-        all_before_set = set(update[:pos])
-        all_after_set = set(update[pos + 1 :])
-        current = update[pos]
-        if any(before in all_after_set for before in predecessors.get(current, [])) or any(
-            after in all_before_set for after in successors.get(current, [])
-        ):
-            return False
-    return True
+def reorder_update(update: Update, successors: Ancestors, predecessors: Ancestors) -> Update:
+    # comparison_function = functools.partial(update_comparison, successors=successors, predecessors=predecessors)
+    # return sorted(update, key=functools.cmp_to_key(comparison_function))
+    return sorted(update, key=functools.cmp_to_key(lambda a, b: page_comparison(a, b, successors, predecessors)))
+
+
+def is_sorted(update: Update, successors: Ancestors, predecessors: Ancestors) -> bool:
+    return update == sorted(
+        update, key=functools.cmp_to_key(lambda a, b: page_comparison(a, b, successors, predecessors))
+    )
 
 
 def get_middle_element(update: Update) -> int:
@@ -54,37 +64,12 @@ def get_middle_element(update: Update) -> int:
 
 def part_A(input_filename: str) -> int:
     (successors, predecessors), updates = read_input(input_filename)
-    return sum(get_middle_element(update) for update in updates if is_update_ok(update, successors, predecessors))
-
-
-def reorder_update(update: Update, successors: Ancestors, predecessors: Ancestors) -> Update:
-    pos = 0
-    while pos < len(update) - 1:
-        all_before_set = set(update[:pos])
-        all_after_set = set(update[pos + 1 :])
-        current = update[pos]
-        reordered = False
-        for before in predecessors.get(current, []):
-            if before in all_after_set:
-                incorrect_index = update.index(before)
-                update.insert(pos, update.pop(incorrect_index))
-                reordered = True
-                break
-        if not reordered:
-            for after in successors.get(current, []):
-                if after in all_before_set:
-                    incorrect_index = update.index(after)
-                    update.insert(incorrect_index + 1, update.pop(pos))
-                    reordered = True
-                    break
-        if not reordered:
-            pos += 1
-    return update
+    return sum(get_middle_element(update) for update in updates if is_sorted(update, successors, predecessors))
 
 
 def part_B(input_filename: str) -> int:
     (successors, predecessors), updates = read_input(input_filename)
-    incorrectly_ordered_updates = [update for update in updates if not is_update_ok(update, successors, predecessors)]
+    incorrectly_ordered_updates = [update for update in updates if not is_sorted(update, successors, predecessors)]
     return sum(
         get_middle_element(reorder_update(update, successors, predecessors)) for update in incorrectly_ordered_updates
     )

@@ -1,4 +1,4 @@
-from day_05 import DAY, get_middle_element, is_update_ok, part_A, part_B, reorder_update
+from day_05 import DAY, get_middle_element, part_A, part_B, reorder_update, is_sorted
 
 successors = {
     47: [53, 13, 61, 29],
@@ -40,10 +40,10 @@ def test_get_middle_element() -> None:
     assert get_middle_element([75, 29, 13]) == 29
 
 
-def test_is_update_ok() -> None:
-    assert is_update_ok([75, 47, 61, 53, 29], successors, predecessors)
-    assert is_update_ok([97, 61, 53, 29, 13], successors, predecessors)
-    assert is_update_ok([75, 29, 13], successors, predecessors)
-    assert not is_update_ok([75, 97, 47, 61, 53], successors, predecessors)
-    assert not is_update_ok([61, 13, 29], successors, predecessors)
-    assert not is_update_ok([97, 13, 75, 29, 47], successors, predecessors)
+def test_is_sorted() -> None:
+    assert is_sorted([75, 47, 61, 53, 29], successors, predecessors)
+    assert is_sorted([97, 61, 53, 29, 13], successors, predecessors)
+    assert is_sorted([75, 29, 13], successors, predecessors)
+    assert not is_sorted([75, 97, 47, 61, 53], successors, predecessors)
+    assert not is_sorted([61, 13, 29], successors, predecessors)
+    assert not is_sorted([97, 13, 75, 29, 47], successors, predecessors)
