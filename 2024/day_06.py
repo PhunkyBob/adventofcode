@@ -53,8 +53,8 @@ def read_input(input_filename: str):
                     guard_position = (x, y)
     GRID_WIDTH = max(x for x, _ in obstructions) + 1
     GRID_HEIGHT = max(y for _, y in obstructions) + 1
-    obstructions = frozenset(obstructions)
-    return obstructions, guard_position
+    frozen_obstructions = frozenset(obstructions)
+    return frozen_obstructions, guard_position
 
 
 def get_next_direction() -> Iterator[str]:
@@ -88,7 +88,7 @@ def get_next_position(position: Position, direction: str) -> Position:
 
 
 def get_moves(
-    obstructions: Set[Position], guard_position: Position, additional_obstruction: Optional[Position] = None
+    obstructions: frozenset[Position], guard_position: Position, additional_obstruction: Optional[Position] = None
 ) -> Tuple[Set[Position], ExitReason]:
     def is_obstructed(position: Position) -> bool:
         return position in obstructions or position == additional_obstruction
