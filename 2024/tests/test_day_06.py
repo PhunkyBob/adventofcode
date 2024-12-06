@@ -8,4 +8,4 @@ def test_part_A() -> None:
 
 def test_part_B() -> None:
     assert part_B(f"day_{DAY}_input_sample.txt") == 6
-    # assert part_B(f"day_{DAY}_input.txt") == 41
+    # assert part_B(f"day_{DAY}_input.txt") == 1443

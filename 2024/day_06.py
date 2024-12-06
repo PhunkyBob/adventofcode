@@ -112,15 +112,15 @@ def get_moves(obstructions: Set[Position], guard_position: Position) -> Tuple[Se
 
 def part_A(input_filename: str) -> int:
     obstructions, guard_position = read_input(input_filename)
-    moves, _ = get_moves(obstructions, guard_position)
-    return len(moves)
+    visited, _ = get_moves(obstructions, guard_position)
+    return len(visited)
 
 
 def part_B(input_filename: str) -> int:
     obstructions, guard_position = read_input(input_filename)
-    moves, _ = get_moves(obstructions, guard_position)
+    visited, _ = get_moves(obstructions, guard_position)
     possible_loops = 0
-    for position in moves:
+    for position in visited:
         new_obstructions = obstructions.copy()
         new_obstructions.add(position)
         _, exit_reason = get_moves(new_obstructions, guard_position)
