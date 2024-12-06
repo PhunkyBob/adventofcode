@@ -92,20 +92,22 @@ def get_moves(obstructions: Set[Position], guard_position: Position) -> Tuple[Se
 
     direction_iter = get_next_direction()
     guard_direction = next(direction_iter)
-    already_visited: Dict[Position, List[str]] = {}
-    # print_map(obstructions, guard_position, guard_direction, already_visited)
-    while (
-        guard_position not in already_visited or guard_direction not in already_visited[guard_position]
-    ) and not is_out_of_bounds(guard_position):
-        already_visited.setdefault(guard_position, []).append(guard_direction)
+    visited_states: Set[Tuple[Position, str]] = set()
+    visited: Set[Position] = set()
+    state = (guard_position, guard_direction)
+    # print_map(obstructions, guard_position, guard_direction, visited)
+    while state not in visited_states and not is_out_of_bounds(guard_position):
+        visited_states.add(state)
+        visited.add(guard_position)
         next_position = get_next_position(guard_position, guard_direction)
         if is_obstructed(next_position):
             guard_direction = next(direction_iter)
         else:
             guard_position = next_position
-        # print_map(obstructions, guard_position, guard_direction, already_visited)
+        state = (guard_position, guard_direction)
+        # print_map(obstructions, guard_position, guard_direction, visited)
     exit_reason = ExitReason.OUT_OF_BOUNDS if is_out_of_bounds(guard_position) else ExitReason.ALREADY_VISITED
-    return set(already_visited.keys()), exit_reason
+    return visited, exit_reason
 
 
 def part_A(input_filename: str) -> int:
@@ -119,9 +121,9 @@ def part_B(input_filename: str) -> int:
     moves, _ = get_moves(obstructions, guard_position)
     possible_loops = 0
     for position in moves:
-        obstructions.add(position)
-        _, exit_reason = get_moves(obstructions, guard_position)
-        obstructions.remove(position)
+        new_obstructions = obstructions.copy()
+        new_obstructions.add(position)
+        _, exit_reason = get_moves(new_obstructions, guard_position)
         if exit_reason == ExitReason.ALREADY_VISITED:
             possible_loops += 1
     return possible_loops
@@ -136,7 +138,7 @@ def main() -> None:
         answer = part_A(input_filename)
         print(f"Answer: {answer}")
 
-    with aoc_perf(memory=True):
+    with aoc_perf(memory=False):  # Part B is slow, so no memory measurement
         print(f"Day {DAY} Part B")
         answer = part_B(input_filename)
         print(f"Answer: {answer}")
