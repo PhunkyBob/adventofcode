@@ -17,7 +17,7 @@ https://adventofcode.com/2024/day/6
 The map shows the current position of the guard with ^ (to indicate the guard is currently facing up from the perspective of the map). Any obstructions - crates, desks, alchemical reactors, etc. - are shown as #.
 """
 
-from typing import Any, Callable, Dict, Iterator, List, Set, Tuple
+from typing import Any, Callable, Dict, Iterator, List, Optional, Set, Tuple
 
 from aoc_performance import aoc_perf
 from enum import Enum
@@ -53,6 +53,7 @@ def read_input(input_filename: str):
                     guard_position = (x, y)
     GRID_WIDTH = max(x for x, _ in obstructions) + 1
     GRID_HEIGHT = max(y for _, y in obstructions) + 1
+    obstructions = frozenset(obstructions)
     return obstructions, guard_position
 
 
@@ -86,9 +87,11 @@ def get_next_position(position: Position, direction: str) -> Position:
     return (x + dx, y + dy)
 
 
-def get_moves(obstructions: Set[Position], guard_position: Position) -> Tuple[Set[Position], ExitReason]:
+def get_moves(
+    obstructions: Set[Position], guard_position: Position, additional_obstruction: Optional[Position] = None
+) -> Tuple[Set[Position], ExitReason]:
     def is_obstructed(position: Position) -> bool:
-        return position in obstructions
+        return position in obstructions or position == additional_obstruction
 
     direction_iter = get_next_direction()
     guard_direction = next(direction_iter)
@@ -121,9 +124,7 @@ def part_B(input_filename: str) -> int:
     visited, _ = get_moves(obstructions, guard_position)
     possible_loops = 0
     for position in visited:
-        new_obstructions = obstructions.copy()
-        new_obstructions.add(position)
-        _, exit_reason = get_moves(new_obstructions, guard_position)
+        _, exit_reason = get_moves(obstructions, guard_position, additional_obstruction=position)
         if exit_reason == ExitReason.ALREADY_VISITED:
             possible_loops += 1
     return possible_loops
