@@ -35,6 +35,7 @@ def read_input(input_filename: str) -> List[Line]:
 
 
 def is_possibly_true_A(result: int, start: int, items: Tuple[int, ...]) -> bool:
+    # v1 implementation: pass the following items to the next recursive call
     if result < start:
         return False
     if not items:
@@ -50,22 +51,21 @@ def is_possibly_true_A(result: int, start: int, items: Tuple[int, ...]) -> bool:
     )
 
 
-def is_possibly_true_B(result: int, start: int, items: Tuple[int, ...]) -> bool:
-    if result < start:
-        return False
-    if not items:
-        return result == start
-    if start == 0:
-        new_start = items[0]
-        new_items = items[1:]
-        return is_possibly_true_B(result, new_start, new_items)
-    new_element = items[0]
-    new_items = items[1:]
-    return (
-        is_possibly_true_B(result, start + new_element, new_items)
-        or is_possibly_true_B(result, start * new_element, new_items)
-        or is_possibly_true_B(result, int(f"{start}{new_element}"), new_items)
-    )
+def is_possibly_true_B(expected_result: int, items: Tuple[int, ...]) -> bool:
+    # v2 implementation: don't copy items, pass the index to the next recursive call
+    def is_possibly_true(index: int, value: int) -> bool:
+        if expected_result < value:
+            return False
+        if index == len(items):
+            return expected_result == value
+        new_element = items[index]
+        return (
+            is_possibly_true(index + 1, value + new_element)
+            or is_possibly_true(index + 1, value * new_element)
+            or is_possibly_true(index + 1, int(f"{value}{new_element}"))
+        )
+
+    return is_possibly_true(1, items[0])
 
 
 def part_A(input_filename: str) -> int:
@@ -75,7 +75,7 @@ def part_A(input_filename: str) -> int:
 
 def part_B(input_filename: str) -> int:
     data = read_input(input_filename)
-    return sum(result for result, items in data if is_possibly_true_B(result, 0, tuple(items)))
+    return sum(result for result, items in data if is_possibly_true_B(result, tuple(items)))
 
 
 def main() -> None:

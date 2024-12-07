@@ -1,15 +1,15 @@
 from day_07 import part_A, part_B, DAY, is_possibly_true_B
 
 
-def test_is_possibly_true() -> None:
+def test_is_possibly_true_B() -> None:
     result, items = 190, (10, 19)
-    assert is_possibly_true_B(result, 0, items) == True
+    assert is_possibly_true_B(result, items) == True
     result, items = 3267, (81, 40, 27)
-    assert is_possibly_true_B(result, 0, items) == True
+    assert is_possibly_true_B(result, items) == True
     result, items = 83, (17, 5)
-    assert is_possibly_true_B(result, 0, items) == False
+    assert is_possibly_true_B(result, items) == False
     result, items = 292, (11, 6, 16, 20)
-    assert is_possibly_true_B(result, 0, items) == True
+    assert is_possibly_true_B(result, items) == True
 
 
 def test_part_A() -> None:
