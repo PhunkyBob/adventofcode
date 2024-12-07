@@ -64,7 +64,7 @@ def is_possibly_true_B(result: int, start: int, items: List[int]) -> bool:
     return (
         is_possibly_true_B(result, start + new_element, new_items)
         or is_possibly_true_B(result, start * new_element, new_items)
-        or is_possibly_true_B(result, start * 10 ** len(str(new_element)) + new_element, new_items)
+        or is_possibly_true_B(result, int(f"{start}{new_element}"), new_items)
     )
 
 
