@@ -16,7 +16,7 @@ https://adventofcode.com/2024/day/7
 Each line represents a single equation. The test value appears before the colon on each line; it is your job to determine whether the remaining numbers can be combined with operators to produce the test value.
 """
 
-from typing import Any, Callable, Dict, List, Tuple
+from typing import List, Tuple
 
 from aoc_performance import aoc_perf
 
@@ -34,7 +34,7 @@ def read_input(input_filename: str) -> List[Line]:
         return [parse_line(line) for line in file.readlines()]
 
 
-def is_possibly_true_A(result: int, start: int, items: List[int]) -> bool:
+def is_possibly_true_A(result: int, start: int, items: Tuple[int, ...]) -> bool:
     if result < start:
         return False
     if not items:
@@ -50,7 +50,7 @@ def is_possibly_true_A(result: int, start: int, items: List[int]) -> bool:
     )
 
 
-def is_possibly_true_B(result: int, start: int, items: List[int]) -> bool:
+def is_possibly_true_B(result: int, start: int, items: Tuple[int, ...]) -> bool:
     if result < start:
         return False
     if not items:
@@ -70,12 +70,12 @@ def is_possibly_true_B(result: int, start: int, items: List[int]) -> bool:
 
 def part_A(input_filename: str) -> int:
     data = read_input(input_filename)
-    return sum(result for result, items in data if is_possibly_true_A(result, 0, items))
+    return sum(result for result, items in data if is_possibly_true_A(result, 0, tuple(items)))
 
 
 def part_B(input_filename: str) -> int:
     data = read_input(input_filename)
-    return sum(result for result, items in data if is_possibly_true_B(result, 0, items))
+    return sum(result for result, items in data if is_possibly_true_B(result, 0, tuple(items)))
 
 
 def main() -> None:
