@@ -62,7 +62,7 @@ def is_out_of_bounds(position: Position) -> bool:
     return x < 0 or x > GRID_WIDTH or y < 0 or y > GRID_HEIGHT
 
 
-def get_antinodes(antennas: Dict[str, Set[Position]]) -> Set[Position]:
+def get_antinodes_A(antennas: Dict[str, Set[Position]]) -> Set[Position]:
     antinodes: Set[Position] = set()
     for antenna in antennas.values():
         for a1, a2 in combinations(antenna, 2):
@@ -73,6 +73,27 @@ def get_antinodes(antennas: Dict[str, Set[Position]]) -> Set[Position]:
             for antinode in [(x1 - diff_x, y1 - diff_y), (x2 + diff_x, y2 + diff_y)]:
                 if not is_out_of_bounds(antinode):
                     antinodes.add(antinode)
+    return antinodes
+
+
+def get_antinodes_B(antennas: Dict[str, Set[Position]]) -> Set[Position]:
+    antinodes: Set[Position] = set()
+    for antenna in antennas.values():
+        for a1, a2 in combinations(antenna, 2):
+            antinodes.add(a1)
+            antinodes.add(a2)
+            x1, y1 = a1
+            x2, y2 = a2
+            diff_x = x2 - x1
+            diff_y = y2 - y1
+            test_pos = (x1 - diff_x, y1 - diff_y)
+            while not is_out_of_bounds(test_pos):
+                antinodes.add(test_pos)
+                test_pos = (test_pos[0] - diff_x, test_pos[1] - diff_y)
+            test_pos = (x2 + diff_x, y2 + diff_y)
+            while not is_out_of_bounds(test_pos):
+                antinodes.add(test_pos)
+                test_pos = (test_pos[0] + diff_x, test_pos[1] + diff_y)
     return antinodes
 
 
@@ -95,13 +116,16 @@ def print_map(antennas: Dict[str, Set[Position]], antinodes: Set[Position]) -> N
 
 def part_A(input_filename: str) -> int:
     antennas = read_input(input_filename)
-    antinodes = get_antinodes(antennas)
-    # print_map(antennas, antinodes)
+    antinodes = get_antinodes_A(antennas)
+    print_map(antennas, antinodes)
     return len(antinodes)
 
 
 def part_B(input_filename: str) -> int:
-    return 0
+    antennas = read_input(input_filename)
+    antinodes = get_antinodes_B(antennas)
+    # print_map(antennas, antinodes)
+    return len(antinodes)
 
 
 def main() -> None:
