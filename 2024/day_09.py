@@ -35,7 +35,7 @@ def read_input(input_filename: str) -> str:
     return data
 
 
-def create_map(data: str) -> Tuple[List[Optional[int]], List[int]]:
+def create_map_A(data: str) -> Tuple[List[Optional[int]], List[int]]:
     drive_map: List[Optional[int]] = []
     free_space: List[int] = []
     id_number = 0
@@ -57,7 +57,7 @@ def create_map(data: str) -> Tuple[List[Optional[int]], List[int]]:
 
 def defrag_A(drive_map: List[Optional[int]], free_space: List[int]) -> List[Optional[int]]:
     for i in range(len(drive_map) - 1, 0, -1):
-        if len(free_space) == 0 or free_space[0] > i:
+        if not free_space or free_space[0] > i:
             break
         if drive_map[i] is not None:
             drive_map[free_space.pop(0)] = drive_map[i]
@@ -65,7 +65,7 @@ def defrag_A(drive_map: List[Optional[int]], free_space: List[int]) -> List[Opti
     return drive_map
 
 
-def get_checksum(drive_map: List[Optional[int]]) -> int:
+def get_checksum_A(drive_map: List[Optional[int]]) -> int:
     checksum = 0
     for i in range(len(drive_map)):
         if drive_map[i] is None:
@@ -76,9 +76,9 @@ def get_checksum(drive_map: List[Optional[int]]) -> int:
 
 def part_A(input_filename: str) -> int:
     data = read_input(input_filename)
-    drive_map, free_state = create_map(data)
+    drive_map, free_state = create_map_A(data)
     drive_map = defrag_A(drive_map, free_state)
-    return get_checksum(drive_map)
+    return get_checksum_A(drive_map)
 
 
 @dataclass
@@ -89,48 +89,68 @@ class Node:
 
 def create_map_as_nodes(data: str) -> List[Node]:
     drive_map: List[Node] = []
-    id_number = 0
-    for item in batched(data, 2):
+    for id_number, item in enumerate(batched(data, 2)):
         file_size = int(item[0])
         drive_map.append(Node(id_number, file_size))
         if len(item) == 2:
             blank_size = int(item[1])
             drive_map.append(Node(None, blank_size))
-        id_number += 1
     return drive_map
 
 
 def find_empty_space(drive_map: List[Node], size: int) -> int:
-    for i in range(len(drive_map)):
-        if drive_map[i].id is None and drive_map[i].length >= size:
-            return i
-    return -1
+    return next(
+        (i for i in range(len(drive_map)) if drive_map[i].id is None and drive_map[i].length >= size),
+        -1,
+    )
+
+
+def print_drive_map_B(drive_map: List[Node]) -> None:
+    for node in drive_map:
+        element = "." if node.id is None else str(node.id)
+        print(element * node.length, end="")
+    print()
 
 
 def defrag_B(drive_map: List[Node]) -> List[Node]:
     node_id = len(drive_map) - 1
     while node_id > 0:
+        # print_drive_map_B(drive_map)
         if drive_map[node_id].id is not None:
             new_position = find_empty_space(drive_map, drive_map[node_id].length)
-            if new_position >= 0:
-
-                drive_map[new_position].id = drive_map[node_id].id
-                drive_map[new_position + 1].length -= drive_map[node_id].length
-                drive_map[node_id].id = None
-                drive_map[node_id].length = 0
+            if new_position >= 0 and new_position < node_id:
+                empty_node: Node = Node(None, drive_map[new_position].length - drive_map[node_id].length)
+                current_node: Node = drive_map[node_id]
+                drive_map[new_position : new_position + 1] = [current_node, empty_node]
+                drive_map[node_id + 1] = Node(None, current_node.length)
+            else:
+                node_id -= 1
+        else:
+            node_id -= 1
 
     return drive_map
+
+
+def get_checksum_B(drive_map: List[Node]) -> int:
+    checksum = 0
+    index = 0
+    for node in drive_map:
+        for _ in range(node.length):
+            if node.id is not None:
+                checksum += node.id * index
+            index += 1
+    return checksum
 
 
 def part_B(input_filename: str) -> int:
     data = read_input(input_filename)
     drive_map = create_map_as_nodes(data)
-
-    return 0
+    drive_map = defrag_B(drive_map)
+    return get_checksum_B(drive_map)
 
 
 def main() -> None:
-    # input_filename = f"day_{DAY}_input_sample.txt"
+    input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=True):
