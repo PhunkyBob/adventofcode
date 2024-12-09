@@ -23,7 +23,7 @@ https://adventofcode.com/2024/day/9
 from dataclasses import dataclass
 from itertools import batched
 from typing import Any, Callable, Dict, List, Optional, Tuple
-
+from collections import namedtuple
 from aoc_performance import aoc_perf
 
 DAY = "09"
@@ -81,10 +81,7 @@ def part_A(input_filename: str) -> int:
     return get_checksum_A(drive_map)
 
 
-@dataclass
-class Node:
-    id: int | None = None
-    length: int = 0
+Node = namedtuple("Node", ["id", "length"])
 
 
 def create_map_as_nodes(data: str) -> List[Node]:
@@ -158,7 +155,7 @@ def main() -> None:
         answer = part_A(input_filename)
         print(f"Answer: {answer}")
 
-    with aoc_perf(memory=True):
+    with aoc_perf(memory=False):
         print(f"Day {DAY} Part B")
         answer = part_B(input_filename)
         print(f"Answer: {answer}")
