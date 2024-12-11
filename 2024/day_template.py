@@ -12,6 +12,11 @@ from aoc_performance import aoc_perf
 DAY = "XX"
 
 
+def read_input(input_filename: str) -> Any:
+    with open(input_filename, "r") as file:
+        return file.read().splitlines()
+
+
 def part_A(input_filename: str) -> int:
     return 0
 
@@ -21,7 +26,8 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
-    input_filename = f"day_{DAY}_input.txt"
+    input_filename = f"day_{DAY}_input_sample.txt"
+    # input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=True):
         print(f"Day {DAY} Part A")
