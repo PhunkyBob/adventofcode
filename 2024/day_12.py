@@ -97,8 +97,7 @@ def get_region_discount_price(region: Set[Position]) -> int:
     return len(region) * get_region_sides(region)
 
 
-def part_A(input_filename: str) -> int:
-    matrix = read_input(input_filename)
+def get_all_regions(matrix) -> Dict[int, Set[Position]]:
     all_regions: Dict[int, Set[Position]] = {}
     all_explored: Set[Position] = set()
     region_id = 0
@@ -109,26 +108,23 @@ def part_A(input_filename: str) -> int:
                 all_explored.update(region)
                 all_regions[region_id] = region
                 region_id += 1
+    return all_regions
+
+
+def part_A(input_filename: str) -> int:
+    matrix = read_input(input_filename)
+    all_regions: Dict[int, Set[Position]] = get_all_regions(matrix)
     return sum(get_region_price(region) for region in all_regions.values())
 
 
 def part_B(input_filename: str) -> int:
     matrix = read_input(input_filename)
-    all_regions: Dict[int, Set[Position]] = {}
-    all_explored: Set[Position] = set()
-    region_id = 0
-    for x in range(matrix.shape[0]):
-        for y in range(matrix.shape[1]):
-            if (x, y) not in all_explored:
-                region = get_full_region(matrix, x, y)
-                all_explored.update(region)
-                all_regions[region_id] = region
-                region_id += 1
+    all_regions: Dict[int, Set[Position]] = get_all_regions(matrix)
     return sum(get_region_discount_price(region) for region in all_regions.values())
 
 
 def main() -> None:
-    input_filename = f"day_{DAY}_input_sample2.txt"
+    # input_filename = f"day_{DAY}_input_sample2.txt"
     input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=False):
