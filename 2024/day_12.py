@@ -20,6 +20,8 @@ https://adventofcode.com/2024/day/12
 
 from typing import Any, Callable, Dict, List, Set, Tuple
 import polars as pl
+import numpy as np
+
 from collections import deque
 
 from aoc_performance import aoc_perf
@@ -30,19 +32,18 @@ Position = Tuple[int, int]
 DIRECTIONS: Dict[str, Position] = {"N": (0, -1), "S": (0, 1), "E": (1, 0), "W": (-1, 0)}
 
 
-def read_input(input_filename: str) -> pl.DataFrame:
-    with open(input_filename, "r") as file:
-        matrix = [list(line.strip()) for line in file]
-        df = pl.DataFrame(matrix)
-    return df
+def read_input(input_filename: str) -> np.ndarray:
+    return np.array([list(line.strip()) for line in open(input_filename)])
 
 
-def get_full_region(matrix: pl.DataFrame, from_x: int, from_y: int) -> Set[Position]:
-    region: Set[Position] = {(from_x, from_y)}
+def get_full_region(matrix: np.ndarray, from_x: int, from_y: int) -> Set[Position]:
+    region = set()
     search_value = matrix[from_x, from_y]
-    to_visit = deque([(from_x, from_y)])
+    to_visit = [(from_x, from_y)]
     while to_visit:
         x, y = to_visit.pop()
+        if (x, y) in region:
+            continue
         region.add((x, y))
         for dx, dy in DIRECTIONS.values():
             new_x, new_y = x + dx, y + dy
@@ -56,10 +57,41 @@ def get_full_region(matrix: pl.DataFrame, from_x: int, from_y: int) -> Set[Posit
     return region
 
 
-def get_region_perimeter(region: Set[Position]) -> int:
+def calculate_regions_and_prices(matrix: np.ndarray, use_discount: bool = False):
+    total_price = 0
+    explored = np.zeros_like(matrix, dtype=bool)
+
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            if not explored[x, y]:
+                region = get_full_region(matrix, x, y)
+
+                # Mark explored
+                for rx, ry in region:
+                    explored[rx, ry] = True
+
+                # Calculate price
+                if use_discount:
+                    price = calculate_discounted_region_price(region)
+                else:
+                    price = calculate_standard_region_price(region)
+
+                total_price += price
+
+    return total_price
+
+
+def calculate_standard_region_price(region: Set[Position]) -> int:
+    return len(region) * count_region_perimeter(region)
+
+
+def calculate_discounted_region_price(region: Set[Position]) -> int:
+    return len(region) * count_region_sides(region)
+
+
+def count_region_perimeter(region: Set[Position]) -> int:
     perimeter = 0
-    for garden in region:
-        x, y = garden
+    for x, y in region:
         for dx, dy in DIRECTIONS.values():
             new_x, new_y = x + dx, y + dy
             if (new_x, new_y) not in region:
@@ -67,60 +99,34 @@ def get_region_perimeter(region: Set[Position]) -> int:
     return perimeter
 
 
-def get_region_sides(region: Set[Position]) -> int:
+def count_region_sides(region: Set[Position]) -> int:
     perimeter = 0
-    for garden in region:
-        x, y = garden
-        for dir, (dx, dy) in DIRECTIONS.items():
+    for x, y in region:
+        for direction, (dx, dy) in DIRECTIONS.items():
             new_x, new_y = x + dx, y + dy
-            if (new_x, new_y) not in region:
-                discount = False
-                if dir == "W" and (x, y - 1) in region and (x - 1, y - 1) not in region:
-                    discount = True
-                elif dir == "N" and (x + 1, y) in region and (x + 1, y - 1) not in region:
-                    discount = True
-                elif dir == "E" and (x, y + 1) in region and (x + 1, y + 1) not in region:
-                    discount = True
-                elif dir == "S" and (x - 1, y) in region and (x - 1, y + 1) not in region:
-                    discount = True
-
-                if not discount:
-                    perimeter += 1
+            if (new_x, new_y) not in region and not is_side_discounted(region, x, y, direction):
+                perimeter += 1
     return perimeter
 
 
-def get_region_price(region: Set[Position]) -> int:
-    return len(region) * get_region_perimeter(region)
-
-
-def get_region_discount_price(region: Set[Position]) -> int:
-    return len(region) * get_region_sides(region)
-
-
-def get_all_regions(matrix) -> Dict[int, Set[Position]]:
-    all_regions: Dict[int, Set[Position]] = {}
-    all_explored: Set[Position] = set()
-    region_id = 0
-    for x in range(matrix.shape[0]):
-        for y in range(matrix.shape[1]):
-            if (x, y) not in all_explored:
-                region = get_full_region(matrix, x, y)
-                all_explored.update(region)
-                all_regions[region_id] = region
-                region_id += 1
-    return all_regions
+def is_side_discounted(region: Set[Position], x: int, y: int, direction: str) -> bool:
+    discounts = {
+        "N": ((x + 1, y) in region and (x + 1, y - 1) not in region),
+        "E": ((x, y + 1) in region and (x + 1, y + 1) not in region),
+        "S": ((x - 1, y) in region and (x - 1, y + 1) not in region),
+        "W": ((x, y - 1) in region and (x - 1, y - 1) not in region),
+    }
+    return discounts[direction]
 
 
 def part_A(input_filename: str) -> int:
     matrix = read_input(input_filename)
-    all_regions: Dict[int, Set[Position]] = get_all_regions(matrix)
-    return sum(get_region_price(region) for region in all_regions.values())
+    return calculate_regions_and_prices(matrix, use_discount=False)
 
 
 def part_B(input_filename: str) -> int:
     matrix = read_input(input_filename)
-    all_regions: Dict[int, Set[Position]] = get_all_regions(matrix)
-    return sum(get_region_discount_price(region) for region in all_regions.values())
+    return calculate_regions_and_prices(matrix, use_discount=True)
 
 
 def main() -> None:
