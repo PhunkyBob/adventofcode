@@ -83,13 +83,13 @@ def count_destinations_from(data: Array, position: Position) -> Tuple[int, int]:
 def part_A(input_filename: str) -> int:
     data = read_input(input_filename)
     start_positions = get_start_positions(data)
-    return sum([count_destinations_from(data, start)[0] for start in start_positions])
+    return sum(count_destinations_from(data, start)[0] for start in start_positions)
 
 
 def part_B(input_filename: str) -> int:
     data = read_input(input_filename)
     start_positions = get_start_positions(data)
-    return sum([count_destinations_from(data, start)[1] for start in start_positions])
+    return sum(count_destinations_from(data, start)[1] for start in start_positions)
 
 
 def main() -> None:
