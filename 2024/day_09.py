@@ -25,6 +25,8 @@ from itertools import batched
 from typing import Any, Callable, Dict, List, Optional, Tuple
 from collections import namedtuple
 from aoc_performance import aoc_perf
+from collections import deque
+from itertools import takewhile
 
 DAY = "09"
 
@@ -35,12 +37,11 @@ def read_input(input_filename: str) -> str:
     return data
 
 
-def create_map_A(data: str) -> Tuple[List[Optional[int]], List[int]]:
+def create_map_A(data: str) -> Tuple[List[Optional[int]], deque]:
     drive_map: List[Optional[int]] = []
-    free_space: List[int] = []
-    id_number = 0
+    free_space: deque = deque()
     position = 0
-    for item in batched(data, 2):
+    for id_number, item in enumerate(batched(data, 2)):
         file_size = int(item[0])
         for _ in range(file_size):
             drive_map.append(id_number)
@@ -51,27 +52,21 @@ def create_map_A(data: str) -> Tuple[List[Optional[int]], List[int]]:
                 drive_map.append(None)
                 free_space.append(position)
                 position += 1
-        id_number += 1
     return drive_map, free_space
 
 
-def defrag_A(drive_map: List[Optional[int]], free_space: List[int]) -> List[Optional[int]]:
+def defrag_A(drive_map: List[Optional[int]], free_space: deque) -> List[Optional[int]]:
     for i in range(len(drive_map) - 1, 0, -1):
         if not free_space or free_space[0] > i:
             break
         if drive_map[i] is not None:
-            drive_map[free_space.pop(0)] = drive_map[i]
+            drive_map[free_space.popleft()] = drive_map[i]
             drive_map[i] = None
     return drive_map
 
 
 def get_checksum_A(drive_map: List[Optional[int]]) -> int:
-    checksum = 0
-    for i in range(len(drive_map)):
-        if drive_map[i] is None:
-            break
-        checksum += drive_map[i] * i
-    return checksum
+    return sum(value * i for i, value in enumerate(takewhile(lambda x: x is not None, drive_map)))
 
 
 def part_A(input_filename: str) -> int:
@@ -112,19 +107,18 @@ def print_drive_map_B(drive_map: List[Node]) -> None:
 def defrag_B(drive_map: List[Node]) -> List[Node]:
     node_id = len(drive_map) - 1
     while node_id > 0:
-        # print_drive_map_B(drive_map)
         if drive_map[node_id].id is not None:
             new_position = find_empty_space(drive_map, drive_map[node_id].length)
             if new_position >= 0 and new_position < node_id:
                 empty_node: Node = Node(None, drive_map[new_position].length - drive_map[node_id].length)
                 current_node: Node = drive_map[node_id]
-                drive_map[new_position : new_position + 1] = [current_node, empty_node]
+                drive_map[new_position] = current_node
+                drive_map.insert(new_position + 1, empty_node)
                 drive_map[node_id + 1] = Node(None, current_node.length)
             else:
                 node_id -= 1
         else:
             node_id -= 1
-
     return drive_map
 
 
