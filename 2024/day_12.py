@@ -19,7 +19,6 @@ https://adventofcode.com/2024/day/12
 """
 
 from typing import Any, Callable, Dict, List, Set, Tuple
-import polars as pl
 import numpy as np
 
 from collections import deque
