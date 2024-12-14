@@ -83,6 +83,25 @@ def is_all_different(robots: Set[Robot]) -> bool:
     return len({pos for pos, _ in robots}) == len(robots)
 
 
+def save_robots_as_png(robots: Set[Robot], width: int, height: int, filename: str) -> None:
+    from PIL import Image
+
+    # Create a new black image
+    img = Image.new("RGB", (width, height), color="black")
+    pixels = img.load()
+    if pixels is None:
+        raise RuntimeError("Failed to load image pixels")
+
+    # Set white pixels where robots are
+    for pos, _ in robots:
+        x, y = pos
+        if 0 <= x < width and 0 <= y < height:
+            pixels[x, y] = (255, 255, 255)  # White
+
+    # Save the image
+    img.save(filename)
+
+
 def part_B(input_filename: str, width: int, height: int) -> int:
     robots = read_input(input_filename)
     # I know that at 1169 seconds the robots are in distinct positions, but without displaying a tree.
@@ -92,6 +111,7 @@ def part_B(input_filename: str, width: int, height: int) -> int:
         seconds += 1
         robots = get_positions_after(robots, width, height, 1)
     # print_map(robots, width, height)
+    # save_robots_as_png(robots, width, height, "day_14.png")
     return seconds
 
 
