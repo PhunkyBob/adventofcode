@@ -19,9 +19,9 @@ p=9,5 v=-3,-3
 Each robot's position is given as p=x,y where x represents the number of tiles the robot is from the left wall and y represents the number of tiles from the top wall (when viewed from above). So, a position of p=0,0 means the robot is all the way in the top-left corner.
 """
 
-from itertools import accumulate
-import operator
-from typing import Any, Callable, Dict, List, Set, Tuple
+from collections import Counter, defaultdict
+from math import prod
+from typing import Set, Tuple
 import re
 from aoc_performance import aoc_perf
 
@@ -55,25 +55,21 @@ def count_robots_per_quadrant(robots: Set[Robot], width: int, height: int) -> in
         3: (0, width // 2 - 1, height // 2 + 1, height - 1),
         4: (width // 2 + 1, width - 1, height // 2 + 1, height - 1),
     }
-    quadrant_counts: Dict[int, int] = {1: 0, 2: 0, 3: 0, 4: 0}
-    for quadrant, bounds in quadrants_bounds.items():
-        for robot in robots:
-            pos, _ = robot
+    quadrant_counts = defaultdict(int)
+    for robot in robots:
+        pos, _ = robot
+        for quadrant, bounds in quadrants_bounds.items():
             if bounds[0] <= pos[0] <= bounds[1] and bounds[2] <= pos[1] <= bounds[3]:
                 quadrant_counts[quadrant] += 1
-    result = 1
-    for count in quadrant_counts.values():
-        result *= count
-    return result
+                break
+    return prod(quadrant_counts.values())
 
 
 def print_map(robots: Set[Robot], width: int, height: int) -> None:
-    current_map = [[0 for _ in range(width)] for _ in range(height)]
-    for robot in robots:
-        pos, _ = robot
-        current_map[pos[1]][pos[0]] += 1
-    for row in current_map:
-        print("".join(str(cell).replace("0", ".") for cell in row))
+    current_map = Counter(pos for pos, _ in robots)
+    for y in range(height):
+        row = "".join(str(current_map.get((x, y), ".")).replace("0", ".") for x in range(width))
+        print(row)
 
 
 def part_A(input_filename: str, width: int, height: int) -> int:
@@ -83,17 +79,8 @@ def part_A(input_filename: str, width: int, height: int) -> int:
     return count_robots_per_quadrant(robots_after, width, height)
 
 
-def is_symetric(robots: Set[Robot], width: int, height: int) -> bool:
-    for robot in robots:
-        pos, _ = robot
-        if (width - pos[0], height - pos[1]) not in robots:
-            return False
-    return True
-
-
 def is_all_different(robots: Set[Robot]) -> bool:
-    positions = {pos for pos, _ in robots}
-    return len(positions) == len(robots)
+    return len({pos for pos, _ in robots}) == len(robots)
 
 
 def part_B(input_filename: str, width: int, height: int) -> int:
