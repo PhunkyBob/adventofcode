@@ -18,8 +18,7 @@ As the robot (@) attempts to move, if there are any boxes (O) in the way, the ro
 """
 
 from collections import deque
-import itertools
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 from aoc_performance import aoc_perf
 import numpy as np
@@ -76,7 +75,7 @@ def move_direction(warehouse: np.ndarray, position: Position, move: str) -> bool
 def move_vertical(position, warehouse, dx, dy):
     # Vertical move
     to_check: deque = deque()
-    to_move: deque = deque()
+    to_move: List[Position] = []
     to_check.append((position[0], position[1]))
     to_move.append((position[0], position[1]))
     if warehouse[position[1], position[0]] == "]":
@@ -85,24 +84,28 @@ def move_vertical(position, warehouse, dx, dy):
     if warehouse[position[1], position[0]] == "[":
         to_check.append((position[0] + 1, position[1]))
         to_move.append((position[0] + 1, position[1]))
+    # checked = set(to_check)
     while to_check:
         x, y = to_check.popleft()
         x, y = x + dx, y + dy
         if warehouse[y, x] == "[" and (x, y) not in to_check:
             to_check.append((x, y))
+            # checked.add((x, y))
             to_move.append((x, y))
             to_check.append((x + 1, y))
+            # checked.add((x + 1, y))
             to_move.append((x + 1, y))
         elif warehouse[y, x] == "]" and (x, y) not in to_check:
             to_check.append((x, y))
+            # checked.add((x, y))
             to_move.append((x, y))
             to_check.append((x - 1, y))
+            # checked.add((x - 1, y))
             to_move.append((x - 1, y))
         elif warehouse[y, x] == "#":
             return False
 
-    while to_move:
-        x, y = to_move.pop()
+    for x, y in reversed(to_move):
         new_x, new_y = x + dx, y + dy
         warehouse[new_y, new_x] = warehouse[y, x]
         warehouse[y, x] = "."
@@ -122,9 +125,7 @@ def print_warehouse(warehouse: np.ndarray, robot_position: Position, move: str) 
 
 def get_sum_of_gps_coordinates(warehouse: np.ndarray) -> int:
     return sum(
-        x + y * 100
-        for y, x in itertools.product(range(warehouse.shape[0]), range(warehouse.shape[1]))
-        if warehouse[y, x] == "["
+        x + y * 100 for y in range(warehouse.shape[0]) for x in range(warehouse.shape[1]) if warehouse[y, x] == "["
     )
 
 
@@ -145,7 +146,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
-    input_filename = f"day_{DAY}_input_sample5.txt"
+    # input_filename = f"day_{DAY}_input_sample2.txt"
     input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=False):
