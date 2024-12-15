@@ -74,7 +74,7 @@ def move_direction(warehouse: np.ndarray, position: Position, move: str) -> bool
 
 
 def move_vertical(position, warehouse, dx, dy):
-    # Vertival move
+    # Vertical move
     to_check: deque = deque()
     to_move: deque = deque()
     to_check.append((position[0], position[1]))
@@ -87,20 +87,17 @@ def move_vertical(position, warehouse, dx, dy):
         to_move.append((position[0] + 1, position[1]))
     while to_check:
         x, y = to_check.popleft()
-        current = warehouse[y, x]
         x, y = x + dx, y + dy
-        if warehouse[y, x] == "[":
+        if warehouse[y, x] == "[" and (x, y) not in to_check:
             to_check.append((x, y))
             to_move.append((x, y))
-            if warehouse[y, x] != current:
-                to_check.append((x + 1, y))
-                to_move.append((x + 1, y))
-        elif warehouse[y, x] == "]":
+            to_check.append((x + 1, y))
+            to_move.append((x + 1, y))
+        elif warehouse[y, x] == "]" and (x, y) not in to_check:
             to_check.append((x, y))
             to_move.append((x, y))
-            if warehouse[y, x] != current:
-                to_check.append((x - 1, y))
-                to_move.append((x - 1, y))
+            to_check.append((x - 1, y))
+            to_move.append((x - 1, y))
         elif warehouse[y, x] == "#":
             return False
 
@@ -142,12 +139,13 @@ def part_B(input_filename: str) -> int:
         elif warehouse[new_y, new_x] == ".":
             robot_position = new_x, new_y
         # print_warehouse(warehouse, robot_position, move)
-    print_warehouse(warehouse, robot_position, move)
+
+    # print_warehouse(warehouse, robot_position, move)
     return get_sum_of_gps_coordinates(warehouse)
 
 
 def main() -> None:
-    input_filename = f"day_{DAY}_input_sample2.txt"
+    input_filename = f"day_{DAY}_input_sample5.txt"
     input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=False):
