@@ -19,7 +19,7 @@ As the robot (@) attempts to move, if there are any boxes (O) in the way, the ro
 
 from collections import deque
 import itertools
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Dict, Tuple
 
 from aoc_performance import aoc_perf
 import numpy as np

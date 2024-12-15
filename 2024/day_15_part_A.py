@@ -18,7 +18,7 @@ As the robot (@) attempts to move, if there are any boxes (O) in the way, the ro
 """
 
 import itertools
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Dict, Tuple
 
 from aoc_performance import aoc_perf
 import numpy as np
@@ -33,8 +33,7 @@ def read_input(input_filename: str) -> Tuple[np.ndarray, str, Position]:
     with open(input_filename, "r") as file:
         warehouse, moves = file.read().split("\n\n")
         warehouse_array = np.array([list(line) for line in warehouse.strip().split("\n")])
-        for y, x in np.argwhere(warehouse_array == "@"):
-            robot_position = (x, y)
+        robot_position = tuple(reversed(np.argwhere(warehouse_array == "@")[0]))
         warehouse_array[robot_position[1], robot_position[0]] = "."
         return warehouse_array, moves.replace("\n", ""), robot_position
 
