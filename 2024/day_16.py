@@ -32,50 +32,61 @@ from aoc_performance import aoc_perf
 DAY = "16"
 DIRECTIONS: Dict[str, Tuple[int, int]] = {"N": (0, -1), "E": (1, 0), "S": (0, 1), "W": (-1, 0)}
 POSSIBLE_DIRECTIONS_FROM: Dict[str, List[str]] = {"N": ["W", "E"], "E": ["N", "S"], "S": ["E", "W"], "W": ["S", "N"]}
-Position = Tuple[int, int]
-Status = Tuple[Position, str]  # (Position, Orientation)
+PositionYX = Tuple[int, int]
+Status = Tuple[PositionYX, str]  # (Position, Orientation)
 
 
-def read_input(input_filename: str) -> Tuple[np.ndarray, Position, Position]:
+def read_input(input_filename: str) -> Tuple[np.ndarray, PositionYX, PositionYX]:
     with open(input_filename, "r") as file:
         maze = np.array([list(line.strip()) for line in file.readlines()])
         start_pos = tuple(np.argwhere(maze == "S")[0])
         end_pos = tuple(np.argwhere(maze == "E")[0])
-        maze[start_pos[1], start_pos[0]] = "."
-        maze[end_pos[1], end_pos[0]] = "."
+        maze[start_pos] = "."
+        maze[end_pos] = "."
     return maze, start_pos, end_pos
 
 
-def print_maze(maze: np.ndarray) -> None:
-    for row in maze:
-        print("".join(row))
+def print_maze(maze: np.ndarray, best_place: Set[PositionYX]) -> None:
+    for y, row in enumerate(maze):
+        for x, cell in enumerate(row):
+            if (y, x) in best_place:
+                print("O", end="")
+            else:
+                print(cell, end="")
+        print()
+    # for row in maze:
+    #     print("".join(row))
 
 
-def get_next_position(pos: Position, direction: str, maze: np.ndarray) -> List[Tuple[Status, int]]:
-    x, y = pos
+def get_next_position(pos: PositionYX, direction: str, maze: np.ndarray) -> List[Tuple[Status, int]]:
+    y, x = pos
     neighbors = []
     dx, dy = DIRECTIONS[direction]
     new_x, new_y = x + dx, y + dy
-    status = ((new_x, new_y), direction)
+    status = ((new_y, new_x), direction)
     if 0 <= new_x < maze.shape[1] and 0 <= new_y < maze.shape[0] and maze[new_y, new_x] == ".":
         neighbors.append((status, 1))
     for new_direction in POSSIBLE_DIRECTIONS_FROM[direction]:
-        status = ((x, y), new_direction)
+        status = ((y, x), new_direction)
         neighbors.append((status, 1000))
     return neighbors
 
 
-def find_shortest_path(maze: np.ndarray, start: Position, orientation: str, end: Position) -> int:
+def find_shortest_path(maze: np.ndarray, start: PositionYX, orientation: str, end: PositionYX) -> int:
     # Priority queue: (distance, position)
-    queue: List[Tuple[int, Status]] = [(0, (start, orientation))]
+    best_place: Set[PositionYX] = set()
+    queue: List[Tuple[int, Status, str, Set[PositionYX]]] = [(0, (start, orientation), "", best_place)]
     # Keep track of visited nodes and distances
     distances: Dict[Status, int] = {(start, orientation): 0}
     visited: Set[Status] = set()
 
     while queue:
-        current_dist, (current_pos, current_orientation) = heappop(queue)
+        current_dist, (current_pos, current_orientation), path, best_place = heappop(queue)
 
         if current_pos == end:
+            print(f"Path: {path} (length: {len(path)})")
+            print(f"Best place: {best_place} (length: {len(best_place)})")
+            print_maze(maze, best_place)
             return current_dist
 
         if (current_pos, current_orientation) in visited:
@@ -87,7 +98,7 @@ def find_shortest_path(maze: np.ndarray, start: Position, orientation: str, end:
             distance = current_dist + cost
             if next_status not in distances or distance < distances[next_status]:
                 distances[next_status] = distance
-                heappush(queue, (distance, next_status))
+                heappush(queue, (distance, next_status, f"{path}{next_status[1]}", best_place | {current_pos}))
 
     return -1  # No path found
 
@@ -104,8 +115,8 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
-    input_filename = f"day_{DAY}_input_sample2.txt"
-    input_filename = f"day_{DAY}_input.txt"
+    input_filename = f"day_{DAY}_input_sample1.txt"
+    # input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=False):
         print(f"Day {DAY} Part A")
