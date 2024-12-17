@@ -23,6 +23,7 @@ The Reindeer start on the Start Tile (marked S) facing East and need to reach th
 """
 
 from collections import defaultdict
+from functools import lru_cache
 from typing import Dict, List, Set, Tuple
 from heapq import heappush, heappop
 
@@ -62,13 +63,14 @@ def print_maze(maze: np.ndarray, best_place: Set[PositionYX], current_pos: Posit
     #     print("".join(row))
 
 
-def get_next_position(pos: PositionYX, direction: str, maze: np.ndarray) -> List[Tuple[Status, int]]:
+@lru_cache(maxsize=1024)
+def get_next_position(pos: PositionYX, direction: str, maze_shape: Tuple[int, int]) -> List[Tuple[Status, int]]:
     y, x = pos
     neighbors = []
     dx, dy = DIRECTIONS[direction]
     new_x, new_y = x + dx, y + dy
     status = ((new_y, new_x), direction)
-    if 0 <= new_x < maze.shape[1] and 0 <= new_y < maze.shape[0] and maze[new_y, new_x] == ".":
+    if 0 <= new_x < maze_shape[1] and 0 <= new_y < maze_shape[0]:
         neighbors.append((status, 1))
     for new_direction in POSSIBLE_DIRECTIONS_FROM[direction]:
         status = ((y, x), new_direction)
@@ -96,7 +98,9 @@ def find_shortest_path(maze: np.ndarray, start: PositionYX, orientation: str, en
 
         visited.add((current_pos, current_orientation))
 
-        for next_status, cost in get_next_position(current_pos, current_orientation, maze):
+        for next_status, cost in get_next_position(current_pos, current_orientation, maze.shape):
+            if maze[next_status[0]] == "#":
+                continue
             distance = current_dist + cost
             if next_status not in distances or distance < distances[next_status]:
                 distances[next_status] = distance
@@ -137,9 +141,11 @@ def find_all_shortest_paths(
         visited.add((current_pos, current_orientation))
 
         # Explore next positions
-        for next_status, cost in get_next_position(current_pos, current_orientation, maze):
-            next_dist = current_dist + cost
+        for next_status, cost in get_next_position(current_pos, current_orientation, maze.shape):
             next_pos = next_status[0]
+            if maze[next_pos] == "#":
+                continue
+            next_dist = current_dist + cost
             next_cells = path_cells.copy()
             next_cells.add(next_pos)
 
