@@ -52,8 +52,7 @@ def print_memory_space(
 
 def find_shortest_path(memory_space: Set[Position], start: Position, end: Position, width: int) -> Tuple[int, Set]:
     # Priority queue: (distance, position)
-    path = set()
-    path.add(start)
+    path = {start}
     queue: List[Tuple[int, Position, Set[Position]]] = [(0, start, path)]
     # Keep track of visited nodes and distances
     distances: Dict[Position, int] = {start: 0}
