@@ -78,13 +78,32 @@ def manhattan_distance(pos1: PositionYX, pos2: PositionYX) -> int:
     return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
 
-def list_shortcuts(maze: np.ndarray, path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, int]:
+def list_shortcuts_old(maze: np.ndarray, path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, int]:
     saves: Dict[int, int] = {}
     for cell1, cell2 in itertools.combinations(path.keys(), 2):
         man_dist = manhattan_distance(cell1, cell2)
         if man_dist <= distance:
             saved_distance = int(abs(path[cell1] - path[cell2]) - man_dist)
             saves[saved_distance] = saves.get(saved_distance, 0) + 1
+    return saves
+
+
+def list_shortcuts(maze: np.ndarray, path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, int]:
+    saves: Dict[int, int] = {}
+    keys = list(path.keys())
+    for cell in keys:
+        y, x = cell
+        for i, j in itertools.product(range(-distance, distance + 1), repeat=2):
+            if i == 0 and j == 0:
+                continue
+            new_cell = (y + i, x + j)
+            if new_cell in path:
+                man_dist = manhattan_distance(cell, new_cell)
+                if man_dist > distance:
+                    continue
+                saved_distance = int(abs(path[cell] - path[new_cell]) - man_dist)
+                saves[saved_distance] = saves.get(saved_distance, 0) + 1
+        del path[cell]
     return saves
 
 
