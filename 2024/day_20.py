@@ -74,10 +74,12 @@ def list_shortcuts(path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, 
     already_checked = set()
     for cell in path:
         y, x = cell
+        # Draw a diamond around the cell ("circle" with manhattan distance as radius).
         for i in range(-distance, distance + 1):
             for j in range(-distance + abs(i), distance - abs(i) + 1):
                 new_cell = (y + i, x + j)
                 if new_cell not in already_checked and new_cell in path:
+                    # If 2 cells are linked by the initial path, we can save some distance by using the shortcut.
                     manhattan_distance = abs(i) + abs(j)
                     saved_distance = int(abs(path[cell] - path[new_cell]) - manhattan_distance)
                     saves[saved_distance] += 1
