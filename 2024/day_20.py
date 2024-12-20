@@ -41,17 +41,13 @@ def print_maze(maze: np.ndarray, current_pos: PositionYX, path: Set[PositionYX])
 
 
 def find_shortest_path(maze: np.ndarray, start: PositionYX, end: PositionYX) -> Tuple[int, Dict[PositionYX, int]]:
-    # Priority queue: (distance, position)
+    # Priority queue: (distance, position, path with assigned distances)
     queue: List[Tuple[int, PositionYX, Set[PositionYX]]] = [(0, start, {start})]
-    # Keep track of visited nodes and distances
     distances: Dict[PositionYX, int] = {start: 0}
     visited: Set[PositionYX] = set()
 
     while queue:
         current_dist, current_pos, path = heappop(queue)
-        # print(f"Distance: {current_dist}")
-        # print_maze(maze, path_cells, current_pos, current_orientation)
-
         if current_pos == end:
             complete_path = {pos: distances[pos] for pos in path}
             return current_dist, complete_path
