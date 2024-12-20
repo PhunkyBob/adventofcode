@@ -69,10 +69,6 @@ def find_shortest_path(maze: np.ndarray, start: PositionYX, end: PositionYX) -> 
     return -1, {}
 
 
-def manhattan_distance(pos1: PositionYX, pos2: PositionYX) -> int:
-    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
-
-
 def list_shortcuts(path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, int]:
     saves = Counter()
     already_checked = set()
@@ -82,8 +78,8 @@ def list_shortcuts(path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, 
             for j in range(-distance + abs(i), distance - abs(i) + 1):
                 new_cell = (y + i, x + j)
                 if new_cell not in already_checked and new_cell in path:
-                    man_dist = manhattan_distance(cell, new_cell)
-                    saved_distance = int(abs(path[cell] - path[new_cell]) - man_dist)
+                    manhattan_distance = abs(i) + abs(j)
+                    saved_distance = int(abs(path[cell] - path[new_cell]) - manhattan_distance)
                     saves[saved_distance] += 1
         already_checked.add(cell)
     return saves
