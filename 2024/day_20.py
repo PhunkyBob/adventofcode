@@ -5,17 +5,16 @@ https://adventofcode.com/2024/day/20
 
 """
 
+from collections import Counter
 from heapq import heappop, heappush
-import itertools
-import math
-from typing import Any, Callable, Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple
 import numpy as np
 from aoc_performance import aoc_perf
 
 DAY = "20"
 
 PositionYX = Tuple[int, int]
-DIRECTIONS: Set[Tuple[int, int]] = {(0, -1), (1, 0), (0, 1), (-1, 0)}  # N, E, S, W
+DIRECTIONS: Tuple[Tuple[int, int], ...] = ((0, -1), (1, 0), (0, 1), (-1, 0))
 
 
 def read_input(input_filename: str) -> Tuple[np.ndarray, PositionYX, PositionYX]:
@@ -78,32 +77,19 @@ def manhattan_distance(pos1: PositionYX, pos2: PositionYX) -> int:
     return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
 
-def list_shortcuts_old(maze: np.ndarray, path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, int]:
-    saves: Dict[int, int] = {}
-    for cell1, cell2 in itertools.combinations(path.keys(), 2):
-        man_dist = manhattan_distance(cell1, cell2)
-        if man_dist <= distance:
-            saved_distance = int(abs(path[cell1] - path[cell2]) - man_dist)
-            saves[saved_distance] = saves.get(saved_distance, 0) + 1
-    return saves
-
-
-def list_shortcuts(maze: np.ndarray, path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, int]:
-    saves: Dict[int, int] = {}
-    keys = list(path.keys())
-    for cell in keys:
+def list_shortcuts(path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, int]:
+    saves = Counter()
+    already_checked = set()
+    for cell in path:
         y, x = cell
-        for i, j in itertools.product(range(-distance, distance + 1), repeat=2):
-            if i == 0 and j == 0:
-                continue
-            new_cell = (y + i, x + j)
-            if new_cell in path:
-                man_dist = manhattan_distance(cell, new_cell)
-                if man_dist > distance:
-                    continue
-                saved_distance = int(abs(path[cell] - path[new_cell]) - man_dist)
-                saves[saved_distance] = saves.get(saved_distance, 0) + 1
-        del path[cell]
+        for i in range(-distance, distance + 1):
+            for j in range(-distance + abs(i), distance - abs(i) + 1):
+                new_cell = (y + i, x + j)
+                if new_cell not in already_checked and new_cell in path:
+                    man_dist = manhattan_distance(cell, new_cell)
+                    saved_distance = int(abs(path[cell] - path[new_cell]) - man_dist)
+                    saves[saved_distance] += 1
+        already_checked.add(cell)
     return saves
 
 
@@ -111,7 +97,7 @@ def part_A(input_filename: str, save_at_least: int) -> int:
     maze, start_pos, end_pos = read_input(input_filename)
     distance, path = find_shortest_path(maze, start_pos, end_pos)
     # print_maze(maze, start_pos, set(path.keys()))
-    shortcuts = list_shortcuts(maze, path)
+    shortcuts = list_shortcuts(path)
     # print(shortcuts)
     return sum(v for k, v in shortcuts.items() if k >= save_at_least)
 
@@ -120,7 +106,7 @@ def part_B(input_filename: str, save_at_least) -> int:
     maze, start_pos, end_pos = read_input(input_filename)
     distance, path = find_shortest_path(maze, start_pos, end_pos)
     # print_maze(maze, start_pos, set(path.keys()))
-    shortcuts = list_shortcuts(maze, path, 20)
+    shortcuts = list_shortcuts(path, 20)
     # print(shortcuts)
     return sum(v for k, v in shortcuts.items() if k >= save_at_least)
 
