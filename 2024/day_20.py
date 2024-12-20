@@ -6,6 +6,7 @@ https://adventofcode.com/2024/day/20
 """
 
 from heapq import heappop, heappush
+import itertools
 import math
 from typing import Any, Callable, Dict, List, Set, Tuple
 import numpy as np
@@ -77,54 +78,50 @@ def manhattan_distance(pos1: PositionYX, pos2: PositionYX) -> int:
     return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
 
-def list_shortcuts(maze: np.ndarray, path: Dict[PositionYX, int]) -> Dict[int, int]:
+def list_shortcuts(maze: np.ndarray, path: Dict[PositionYX, int], distance: int = 2) -> Dict[int, int]:
     saves: Dict[int, int] = {}
-    for y, row in enumerate(maze):
-        for x, cell in enumerate(row):
-            if cell != "#":
-                continue
-            min_distance = math.inf
-            max_distance = 0
-            items_around = 0
-            for direction in DIRECTIONS:
-                next_position = (y + direction[0], x + direction[1])
-                if next_position in path:
-                    items_around += 1
-                    distance = path[next_position]
-                    if distance > max_distance:
-                        max_distance = distance
-                    if distance < min_distance:
-                        min_distance = distance
-            if items_around >= 2:
-                saves[int(max_distance - min_distance - 2)] = saves.get(int(max_distance - min_distance - 2), 0) + 1
+    for cell1, cell2 in itertools.combinations(path.keys(), 2):
+        man_dist = manhattan_distance(cell1, cell2)
+        if man_dist <= distance:
+            saved_distance = int(abs(path[cell1] - path[cell2]) - man_dist)
+            saves[saved_distance] = saves.get(saved_distance, 0) + 1
     return saves
 
 
-def part_A(input_filename: str) -> int:
+def part_A(input_filename: str, save_at_least: int) -> int:
     maze, start_pos, end_pos = read_input(input_filename)
     distance, path = find_shortest_path(maze, start_pos, end_pos)
     # print_maze(maze, start_pos, set(path.keys()))
     shortcuts = list_shortcuts(maze, path)
     # print(shortcuts)
-    return sum(v for k, v in shortcuts.items() if k >= 100)
+    return sum(v for k, v in shortcuts.items() if k >= save_at_least)
 
 
-def part_B(input_filename: str) -> int:
-    return 0
+def part_B(input_filename: str, save_at_least) -> int:
+    maze, start_pos, end_pos = read_input(input_filename)
+    distance, path = find_shortest_path(maze, start_pos, end_pos)
+    # print_maze(maze, start_pos, set(path.keys()))
+    shortcuts = list_shortcuts(maze, path, 20)
+    # print(shortcuts)
+    return sum(v for k, v in shortcuts.items() if k >= save_at_least)
 
 
 def main() -> None:
     input_filename = f"day_{DAY}_input_sample.txt"
+    save_at_least_A = 1
+    save_at_least_B = 50
     input_filename = f"day_{DAY}_input.txt"
+    save_at_least_A = 100
+    save_at_least_B = 100
 
     with aoc_perf(memory=False):
         print(f"Day {DAY} Part A")
-        answer = part_A(input_filename)
+        answer = part_A(input_filename, save_at_least_A)
         print(f"Answer: {answer}")
 
     with aoc_perf(memory=False):
         print(f"Day {DAY} Part B")
-        answer = part_B(input_filename)
+        answer = part_B(input_filename, save_at_least_B)
         print(f"Answer: {answer}")
 
 
