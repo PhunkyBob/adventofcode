@@ -7,28 +7,36 @@ https://adventofcode.com/2024/day/25
 
 from itertools import product
 from typing import Any, List, Tuple
+import numpy as np
 
 from aoc_performance import aoc_perf
 
 DAY = "25"
 
 
-def read_input(input_filename: str) -> Any:
-    locks: List[Tuple[int, ...]] = []
-    keys: List[Tuple[int, ...]] = []
+def read_input(input_filename: str):
     with open(input_filename, "r") as file:
-        for item in file.read().split("\n\n"):
-            elem = tuple(sum(pin == "#" for pin in pins) - 1 for pins in zip(*item.splitlines()))
-            if item.startswith("#"):
-                locks.append(elem)
-            else:
-                keys.append(elem)
+        items = file.read().split("\n\n")
+        locks = np.array(
+            [
+                [sum(pin == "#" for pin in pins) - 1 for pins in zip(*item.splitlines())]
+                for item in items
+                if item.startswith("#")
+            ]
+        )
+        keys = np.array(
+            [
+                [sum(pin == "#" for pin in pins) - 1 for pins in zip(*item.splitlines())]
+                for item in items
+                if not item.startswith("#")
+            ]
+        )
     return locks, keys
 
 
 def part_A(input_filename: str) -> int:
     locks, keys = read_input(input_filename)
-    return sum(all((k + l <= 5 for k, l in zip(key, lock))) for lock, key in product(locks, keys))
+    return int(np.sum(np.all(keys[:, np.newaxis] + locks <= 5, axis=2)))
 
 
 def main() -> None:
