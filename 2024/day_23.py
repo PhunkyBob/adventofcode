@@ -7,8 +7,8 @@ https://adventofcode.com/2024/day/23
 
 from collections import Counter, deque
 from typing import Any, Dict, List, Set, Tuple
-from itertools import combinations
-
+import networkx as nx
+import matplotlib.pyplot as plt
 from aoc_performance import aoc_perf
 
 DAY = "23"
@@ -32,6 +32,18 @@ def get_three_connections(connections: Dict[str, List[str]], starts_with: str = 
         for t in targets
         for k in set(targets) & set(connections[t])
     }
+
+
+def plot_connections(connections: Dict[str, List[str]]) -> None:
+    g = nx.Graph()
+    for node, links in connections.items():
+        for link in links:
+            if node < link:
+                g.add_edge(node, link)
+    plt.figure(figsize=(32, 24))
+    nx.draw(g, with_labels=True)
+    plt.savefig("day_23.svg", bbox_inches="tight", dpi=300)
+    # plt.show()
 
 
 def part_A(input_filename: str) -> int:
@@ -73,6 +85,8 @@ def part_B(input_filename: str) -> str:
 def main() -> None:
     input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
+
+    # plot_connections(read_input(input_filename))
 
     with aoc_perf(memory=False):
         print(f"Day {DAY} Part A")
