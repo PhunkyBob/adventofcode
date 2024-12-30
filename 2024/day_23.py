@@ -7,6 +7,7 @@ https://adventofcode.com/2024/day/23
 
 from collections import Counter, deque
 from typing import Any, Dict, List, Set, Tuple
+from itertools import combinations
 
 from aoc_performance import aoc_perf
 
@@ -23,19 +24,14 @@ def read_input(input_filename: str) -> Any:
     return connections
 
 
-def get_three_connections(connections: Dict[str, List[str]], starts_with: str = "") -> Set:
-    inter_connected: Set = set()
-    for src, targets in connections.items():
-        if not src.startswith(starts_with):
-            continue
-        counter1 = Counter(targets)
-        for t in targets:
-            counter2 = Counter(connections[t])
-            common_elements = counter1 & counter2
-            for k in common_elements:
-                inter = tuple(sorted([src, t, k]))
-                inter_connected.add(inter)
-    return inter_connected
+def get_three_connections(connections: Dict[str, List[str]], starts_with: str = "") -> Set[Tuple[str, ...]]:
+    return {
+        tuple(sorted([src, t, k]))
+        for src, targets in connections.items()
+        if src.startswith(starts_with)
+        for t in targets
+        for k in set(targets) & set(connections[t])
+    }
 
 
 def part_A(input_filename: str) -> int:
@@ -43,11 +39,11 @@ def part_A(input_filename: str) -> int:
     return len(get_three_connections(connections, "t"))
 
 
-def all_have_x(connections: Dict[str, List[str]], items: List[str], x: str) -> bool:
+def all_have_x(connections: Dict[str, List[str]], items: Tuple[str, ...], x: str) -> bool:
     return all(x in connections[item] for item in items)
 
 
-def x_have_all(connections: Dict[str, List[str]], items: List[str], x: str) -> bool:
+def x_have_all(connections: Dict[str, List[str]], items: Tuple[str, ...], x: str) -> bool:
     return all(item in connections[x] for item in items)
 
 
