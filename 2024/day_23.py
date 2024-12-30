@@ -5,8 +5,8 @@ https://adventofcode.com/2024/day/23
 
 """
 
-from collections import Counter
-from typing import Any, Dict, List, Set
+from collections import Counter, deque
+from typing import Any, Dict, List, Set, Tuple
 
 from aoc_performance import aoc_perf
 
@@ -23,7 +23,7 @@ def read_input(input_filename: str) -> Any:
     return connections
 
 
-def count_three_connections(connections: Dict[str, List[str]], starts_with: str = "") -> int:
+def get_three_connections(connections: Dict[str, List[str]], starts_with: str = "") -> Set:
     inter_connected: Set = set()
     for src, targets in connections.items():
         if not src.startswith(starts_with):
@@ -35,38 +35,48 @@ def count_three_connections(connections: Dict[str, List[str]], starts_with: str 
             for k in common_elements:
                 inter = tuple(sorted([src, t, k]))
                 inter_connected.add(inter)
-    return len(inter_connected)
-
-
-def get_sub_networks(connections: Dict[str, List[str]]) -> int:
-    # inter_connected: Set = set()
-    # for src, targets in connections.items():
-    #     network = [src, *targets]
-    #     counter1 = Counter(network)
-    #     for t in targets:
-    #         network2 = [t, *connections[t]]
-    #         counter2 = Counter(network2)
-    #         common_elements = counter1 & counter2
-    #     inter = tuple(sorted(common_elements))
-    #     inter_connected.add(inter)
-    # return inter_connected
-    ...
+    return inter_connected
 
 
 def part_A(input_filename: str) -> int:
     connections = read_input(input_filename)
-    return count_three_connections(connections, "t")
+    return len(get_three_connections(connections, "t"))
 
 
-def part_B(input_filename: str) -> int:
+def all_have_x(connections: Dict[str, List[str]], items: List[str], x: str) -> bool:
+    return all(x in connections[item] for item in items)
+
+
+def x_have_all(connections: Dict[str, List[str]], items: List[str], x: str) -> bool:
+    return all(item in connections[x] for item in items)
+
+
+def part_B(input_filename: str) -> str:
     connections = read_input(input_filename)
-    sub_networks = get_sub_networks(connections)
-    return 0
+    starts = get_three_connections(connections, "")
+    queue = deque(list(starts))
+    longest = 0
+    answer = ""
+    already_seen = set()
+    while queue:
+        elem = queue.pop()
+        if elem in already_seen:
+            continue
+        already_seen.add(elem)
+        for new_element in connections[elem[0]]:
+            if all_have_x(connections, elem, new_element) and x_have_all(connections, elem, new_element):
+                new_start = tuple(sorted([new_element, *elem]))
+                if new_start not in already_seen:
+                    queue.append(new_start)
+                if len(new_start) > longest:
+                    longest = len(new_start)
+                    answer = new_start
+    return ",".join(list(answer))
 
 
 def main() -> None:
     input_filename = f"day_{DAY}_input_sample.txt"
-    # input_filename = f"day_{DAY}_input.txt"
+    input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=False):
         print(f"Day {DAY} Part A")
