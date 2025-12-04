@@ -7,9 +7,12 @@ https://adventofcode.com/2024/day/23
 
 from collections import Counter, deque
 from typing import Any, Dict, List, Set, Tuple
-import networkx as nx
+
 import matplotlib.pyplot as plt
+import networkx as nx
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "23"
 
@@ -83,6 +86,7 @@ def part_B(input_filename: str) -> str:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
 

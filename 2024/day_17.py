@@ -9,6 +9,7 @@ from itertools import batched
 from typing import Any, Callable, Dict, List, Optional
 import re
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "17"
 
@@ -133,6 +134,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     input_filename = f"day_{DAY}_input_sample2.txt"
     input_filename = f"day_{DAY}_input.txt"
 

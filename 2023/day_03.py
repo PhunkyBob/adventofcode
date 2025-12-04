@@ -21,10 +21,12 @@ Here is an example engine schematic:
 
 In this schematic, two numbers are not part numbers because they are not adjacent to a symbol: 114 (top right) and 58 (middle right). Every other number is adjacent to a symbol and so is a part number; their sum is 4361.
 """
-from typing import List, Tuple
-from aoc_performance import aoc_perf
-from dataclasses import dataclass
 
+from dataclasses import dataclass
+from typing import List, Tuple
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "03"
 
@@ -123,6 +125,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=False):

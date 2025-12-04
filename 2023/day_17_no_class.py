@@ -9,6 +9,8 @@ from typing import Any, Callable, List, Dict, NamedTuple, Optional, Tuple
 from aoc_performance import aoc_perf
 import heapq
 
+from aoc_utils import download_input
+
 DAY = "17"
 
 
@@ -99,6 +101,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

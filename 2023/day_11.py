@@ -19,9 +19,12 @@ The researcher has collected a bunch of data and compiled the data into a single
 The researcher is trying to figure out the sum of the lengths of the shortest path between every pair of galaxies.
 
 """
-from typing import Any, Callable, List, Dict, NamedTuple, Set
-from aoc_performance import aoc_perf
+
 from itertools import combinations_with_replacement
+from typing import Any, Callable, Dict, List, NamedTuple, Set
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "11"
 
@@ -80,6 +83,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

@@ -18,12 +18,13 @@ https://adventofcode.com/2024/day/12
 +-+-+-+
 """
 
+from collections import deque
 from typing import Any, Callable, Dict, List, Set, Tuple
+
 import numpy as np
 
-from collections import deque
-
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "12"
 
@@ -129,6 +130,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     # input_filename = f"day_{DAY}_input_sample2.txt"
     input_filename = f"day_{DAY}_input.txt"
 

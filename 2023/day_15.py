@@ -9,8 +9,11 @@ https://adventofcode.com/2023/day/15
 - Set the current value to itself multiplied by 17.
 - Set the current value to the remainder of dividing itself by 256.
 """
-from typing import Any, Callable, List, Dict
+
+from typing import Any, Callable, Dict, List
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "15"
 
@@ -58,6 +61,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

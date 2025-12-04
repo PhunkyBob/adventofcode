@@ -18,10 +18,13 @@ In game 1, three sets of cubes are revealed from the bag (and then put back agai
 The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
 
 """
-from dataclasses import dataclass
-from typing import Any, Callable, List, Dict
-from aoc_performance import aoc_perf
+
 import re
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "02"
 
@@ -67,6 +70,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

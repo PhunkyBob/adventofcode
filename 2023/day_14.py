@@ -4,9 +4,11 @@ Advent of Code 2023
 https://adventofcode.com/2023/day/14
 
 """
-from typing import List, Dict
-from aoc_performance import aoc_perf
 
+from typing import Dict, List
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "14"
 
@@ -68,6 +70,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

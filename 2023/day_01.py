@@ -14,10 +14,12 @@ treb7uchet
 
 In this example, the calibration values of these four lines are 12, 38, 15, and 77. Adding these together produces 142.
 """
-from typing import Any, Callable, List, Dict
-from aoc_performance import aoc_perf
-from aoc_utils import compose
+
 import re
+from typing import Any, Callable, Dict, List
+
+from aoc_performance import aoc_perf
+from aoc_utils import compose, download_input
 
 DAY = "01"
 MAP_DIGITS: Dict[str, str] = {
@@ -77,6 +79,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
 
     with aoc_perf(memory=False):

@@ -11,10 +11,13 @@ KK677 28
 KTJJT 220
 QQQJA 483
 """
+
 from collections import Counter
-from typing import List, Dict, Tuple, Union
-from aoc_performance import aoc_perf
 from enum import Enum
+from typing import Dict, List, Tuple, Union
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "07"
 
@@ -95,6 +98,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

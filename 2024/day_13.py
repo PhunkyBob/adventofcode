@@ -11,10 +11,13 @@ This list describes the button configuration and prize location of claw machine.
 """
 
 import contextlib
-from typing import List, Tuple
-import numpy as np
-from aoc_performance import aoc_perf
 import re
+from typing import List, Tuple
+
+import numpy as np
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "13"
 
@@ -93,6 +96,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     # input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
 

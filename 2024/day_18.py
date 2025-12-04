@@ -15,8 +15,11 @@ OO.#OOO
 
 from heapq import heappop, heappush
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+
 import numpy as np
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "18"
 
@@ -114,6 +117,7 @@ def part_B(input_filename: str, width: int, already_fallen: int) -> str:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     # input_filename = f"day_{DAY}_input_sample.txt"
     # width = 7
     # already_fallen = 12

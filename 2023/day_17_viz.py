@@ -5,17 +5,19 @@ https://adventofcode.com/2023/day/17
 
 Vizualisation of the solution of day 17.
 """
-from enum import Enum
-import os
-import time
-from typing import Any, Callable, List, Dict, NamedTuple, Optional, Set, Tuple
-from aoc_performance import aoc_perf
+
 import heapq
-
-
-from dataclasses import dataclass
-import pygame
+import os
 import random
+import time
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any, Callable, Dict, List, NamedTuple, Optional, Set, Tuple
+
+import pygame
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 pygame.font.init()
 
@@ -185,6 +187,7 @@ def draw_window(matrix: List[List[int]], candidates: List[Tuple[int, Element]], 
 
 
 def main():
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
     matrix = read_input(input_filename)

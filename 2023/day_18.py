@@ -23,10 +23,12 @@ U 2 (#7a21e3)
 """
 
 import itertools
-from collections import deque
 import sys
-from typing import Any, Callable, Deque, List, Dict, Set, Tuple
+from collections import deque
+from typing import Any, Callable, Deque, Dict, List, Set, Tuple
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "18"
 
@@ -159,6 +161,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

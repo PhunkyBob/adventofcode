@@ -8,8 +8,11 @@ https://adventofcode.com/2024/day/20
 from collections import Counter
 from heapq import heappop, heappush
 from typing import Dict, List, Set, Tuple
+
 import numpy as np
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "20"
 
@@ -106,6 +109,7 @@ def part_B(input_filename: str, save_at_least) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     input_filename = f"day_{DAY}_input_sample.txt"
     save_at_least_A = 1
     save_at_least_B = 50

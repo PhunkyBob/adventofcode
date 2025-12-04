@@ -17,10 +17,11 @@ https://adventofcode.com/2024/day/6
 The map shows the current position of the guard with ^ (to indicate the guard is currently facing up from the perspective of the map). Any obstructions - crates, desks, alchemical reactors, etc. - are shown as #.
 """
 
+from enum import Enum
 from typing import Any, Callable, Dict, Iterator, List, Optional, Set, Tuple
 
 from aoc_performance import aoc_perf
-from enum import Enum
+from aoc_utils import download_input
 
 DAY = "06"
 
@@ -131,6 +132,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
 

@@ -8,7 +8,9 @@ The strange part is that every time you blink, the stones change.
 
 from dataclasses import dataclass
 from typing import Dict, List
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "11"
 
@@ -80,6 +82,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     # input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
 

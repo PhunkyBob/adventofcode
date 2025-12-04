@@ -26,7 +26,9 @@ To find the reflection in each pattern, you need to find a perfect reflection ac
 
 import itertools
 from typing import Generator, List, Tuple
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "13"
 Array = List[List[str]]
@@ -142,6 +144,7 @@ def part_B_old(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

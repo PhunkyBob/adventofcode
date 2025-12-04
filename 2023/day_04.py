@@ -23,10 +23,12 @@ In the above example, card 1 has five winning numbers (41, 48, 83, 86, and 17) a
 So, in this example, the Elf's pile of scratchcards is worth 13 points.
 """
 
-from typing import List
-from aoc_performance import aoc_perf
 import re
 from collections import deque
+from typing import List
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "04"
 
@@ -72,6 +74,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

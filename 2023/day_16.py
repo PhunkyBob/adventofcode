@@ -4,10 +4,12 @@ Advent of Code 2023
 https://adventofcode.com/2023/day/16
 
 """
-from enum import Enum
-from typing import List, Dict, NamedTuple, Set, Tuple
-from aoc_performance import aoc_perf
 
+from enum import Enum
+from typing import Dict, List, NamedTuple, Set, Tuple
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "16"
 
@@ -155,6 +157,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

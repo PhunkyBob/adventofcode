@@ -19,6 +19,7 @@ Each line represents a single equation. The test value appears before the colon 
 from typing import List, Tuple
 
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "07"
 Line = Tuple[int, List[int]]
@@ -79,6 +80,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
 

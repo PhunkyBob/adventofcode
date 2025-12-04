@@ -14,8 +14,11 @@ To extrapolate, start by adding a new zero to the end of your list of zeroes; be
     0   0   0   0   0
 
 """
+
 from typing import List
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "09"
 
@@ -57,6 +60,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

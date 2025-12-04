@@ -5,10 +5,13 @@ https://adventofcode.com/2023/day/5
 
 
 """
-from typing import Any, Callable, Deque, List, Dict
-from aoc_performance import aoc_perf
+
 import re
-from collections import namedtuple, deque
+from collections import deque, namedtuple
+from typing import Any, Callable, Deque, Dict, List
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "05"
 Chunk = namedtuple("Chunk", ["start", "length"])
@@ -78,6 +81,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

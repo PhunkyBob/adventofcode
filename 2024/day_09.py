@@ -20,13 +20,13 @@ https://adventofcode.com/2024/day/9
 0099811188827773336446555566..............
 """
 
+from collections import deque, namedtuple
 from dataclasses import dataclass
-from itertools import batched
+from itertools import batched, takewhile
 from typing import Any, Callable, Dict, List, Optional, Tuple
-from collections import namedtuple
+
 from aoc_performance import aoc_perf
-from collections import deque
-from itertools import takewhile
+from aoc_utils import download_input
 
 DAY = "09"
 
@@ -141,6 +141,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     input_filename = f"day_{DAY}_input_sample.txt"
     input_filename = f"day_{DAY}_input.txt"
 

@@ -24,12 +24,13 @@ The Reindeer start on the Start Tile (marked S) facing East and need to reach th
 
 from collections import defaultdict
 from functools import lru_cache
+from heapq import heappop, heappush
 from typing import Dict, List, Set, Tuple
-from heapq import heappush, heappop
 
 import numpy as np
 
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "16"
 DIRECTIONS: Dict[str, Tuple[int, int]] = {"N": (0, -1), "E": (1, 0), "S": (0, 1), "W": (-1, 0)}
@@ -170,6 +171,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     # input_filename = f"day_{DAY}_input_sample1.txt"
     input_filename = f"day_{DAY}_input.txt"
 

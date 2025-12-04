@@ -5,13 +5,15 @@ https://adventofcode.com/2023/day/23
 
 """
 
-from functools import lru_cache
 import heapq
 import itertools
 import sys
-from typing import Any, Callable, List, Dict, Optional, Set, Tuple
-from aoc_performance import aoc_perf
 from collections import deque
+from functools import lru_cache
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 sys.setrecursionlimit(10000)
 
@@ -143,6 +145,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

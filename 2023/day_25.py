@@ -4,11 +4,15 @@ Advent of Code 2023
 https://adventofcode.com/2023/day/25
 
 """
+
 from functools import reduce
 from operator import mul
-from typing import Any, Callable, List, Dict, Tuple
-from aoc_performance import aoc_perf
+from typing import Any, Callable, Dict, List, Tuple
+
 import networkx as nx
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "25"
 
@@ -39,6 +43,7 @@ def part_A(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 

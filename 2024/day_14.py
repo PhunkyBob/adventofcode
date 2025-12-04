@@ -19,11 +19,13 @@ p=9,5 v=-3,-3
 Each robot's position is given as p=x,y where x represents the number of tiles the robot is from the left wall and y represents the number of tiles from the top wall (when viewed from above). So, a position of p=0,0 means the robot is all the way in the top-left corner.
 """
 
+import re
 from collections import Counter, defaultdict
 from math import prod
 from typing import Set, Tuple
-import re
+
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "14"
 Position = Tuple[int, int]
@@ -116,6 +118,7 @@ def part_B(input_filename: str, width: int, height: int) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2024)
     # input_filename = f"day_{DAY}_input_sample.txt"
     # width, height = 11, 7
     input_filename = f"day_{DAY}_input.txt"

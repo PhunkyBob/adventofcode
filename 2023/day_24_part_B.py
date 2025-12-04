@@ -4,12 +4,16 @@ Advent of Code 2023
 https://adventofcode.com/2023/day/24
 
 """
+
 import itertools
-from typing import Any, Callable, List, Dict, Optional, Tuple
-from aoc_performance import aoc_perf
 import re
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
 import z3
 from z3 import ExprRef
+
+from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "24"
 
@@ -48,6 +52,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2023)
     input_filename = f"day_{DAY}_input.txt"
     # input_filename = f"day_{DAY}_input_sample.txt"
 
