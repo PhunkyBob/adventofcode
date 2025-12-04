@@ -8,6 +8,7 @@ https://adventofcode.com/2025/day/X
 from typing import Any, Callable, Dict, List
 
 from aoc_performance import aoc_perf
+from aoc_utils import download_input
 
 DAY = "XX"
 
@@ -26,6 +27,7 @@ def part_B(input_filename: str) -> int:
 
 
 def main() -> None:
+    download_input(DAY, 2025)
     input_filename = f"day_{DAY}_input_sample.txt"
     # input_filename = f"day_{DAY}_input.txt"
 
