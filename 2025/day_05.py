@@ -5,6 +5,7 @@ https://adventofcode.com/2025/day/5
 
 """
 
+import bisect
 from typing import Any, Callable, Dict, List
 
 from aoc_performance import aoc_perf
@@ -24,19 +25,18 @@ def read_input(input_filename: str) -> tuple[List[Range], List[int]]:
 
 
 def sort_ranges(ranges: List[Range]) -> List[Range]:
-    ranges.sort(key=lambda x: x[0])
-    return ranges
+    return sorted(ranges, key=lambda x: x[0])
 
 
 def merge_ranges(sorted_ranges: List[Range]) -> List[Range]:
-    merged_ranges: List[Range] = []
-    for start, end in sorted_ranges:
-        if not merged_ranges:
-            merged_ranges.append((start, end))
-            continue
+    if not sorted_ranges:
+        return []
 
-        if start <= merged_ranges[-1][1]:
-            merged_ranges[-1] = (merged_ranges[-1][0], max(merged_ranges[-1][1], end))
+    merged_ranges: List[Range] = [sorted_ranges[0]]
+    for start, end in sorted_ranges[1:]:
+        last_start, last_end = merged_ranges[-1]
+        if start <= last_end + 1:  # +1 pour fusionner ranges adjacents
+            merged_ranges[-1] = (last_start, max(last_end, end))
         else:
             merged_ranges.append((start, end))
     return merged_ranges
