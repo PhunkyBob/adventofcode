@@ -11,7 +11,7 @@ For example:
 """
 
 import re
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 from z3 import Int, Optimize
 
@@ -29,11 +29,14 @@ IntMachine = Tuple[Diagram, List[IntButton], Joltage]
 Machine = Tuple[Diagram, List[Button], Joltage]
 
 
+PATTERN = re.compile(r"\[([\.#]+)\] (.+) \{([\d,]+)\}")
+
+
 def read_input(input_filename: str) -> List[IntMachine]:
     machines: List[IntMachine] = []
     with open(input_filename, "r") as file:
         for line in file.read().splitlines():
-            if res := re.findall(r"\[([\.#]+)\] (.+) \{([\d,]+)\}", line):
+            if res := PATTERN.findall(line):
                 diagram_str, buttons_str, joltage_str = res[0]
                 diagram = int("".join("1" if c == "#" else "0" for c in diagram_str[::-1]), 2)
                 buttons = [sum(2**v for v in map(int, btn[1:-1].split(","))) for btn in buttons_str.split(" ")]
@@ -46,7 +49,7 @@ def read_input_part_B(input_filename: str) -> List[Machine]:
     machines: List[Machine] = []
     with open(input_filename, "r") as file:
         for line in file.read().splitlines():
-            if res := re.findall(r"\[([\.#]+)\] (.+) \{([\d,]+)\}", line):
+            if res := PATTERN.findall(line):
                 _, buttons_str, joltage_str = res[0]
                 buttons = [list(map(int, btn[1:-1].split(","))) for btn in buttons_str.split(" ")]
                 joltage = list(map(int, joltage_str.split(",")))
@@ -54,26 +57,32 @@ def read_input_part_B(input_filename: str) -> List[Machine]:
     return machines
 
 
-def press_button(diagram: Diagram, button: IntButton) -> Diagram:
-    return diagram ^ button
-
-
 def process_machine(machine: IntMachine) -> int:
-    diagram, buttons, joltage = machine
-    values: Dict[int, List[IntButton]] = {but: [but] for but in buttons}
+    diagram, buttons, _ = machine
+    if diagram == 0:
+        return 0
 
-    length = 1
-    while diagram not in values:
-        for val in list(values.keys()):
-            if len(values[val]) != length:
-                continue
+    if diagram in buttons:
+        return 1
+
+    visited = set(buttons)
+    current_level = set(buttons)
+    steps = 1
+
+    while current_level:
+        steps += 1
+        next_level = set()
+        for val in current_level:
             for but in buttons:
-                new_val = press_button(val, but)
-                if new_val not in values:
-                    values[new_val] = values[val] + [but]
-        length += 1
+                new_val = val ^ but
+                if new_val == diagram:
+                    return steps
+                if new_val not in visited:
+                    visited.add(new_val)
+                    next_level.add(new_val)
+        current_level = next_level
 
-    return length
+    return 0
 
 
 def solve_machine(machine: Machine) -> int:
